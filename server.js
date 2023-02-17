@@ -14,55 +14,23 @@ let department_value;
 let courses_name;
 let language_name;
 let technology_name;
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
 
   //this query use for get data for drop down menu
-  con.query('SELECT * FROM practice.option_master where option_id=1', (err, result1, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    option_value = result1;
-
-  });
-  con.query('SELECT * FROM practice.option_master where option_id=2', (err, result2, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    state_value = result2;
-
-  });
-  con.query('SELECT * FROM practice.option_master where option_id=3', (err, result3, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    pref_value = result3;
-
-  });
-  con.query('SELECT * FROM practice.option_master where option_id=4', (err, result4, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    department_value = result4;
-
-  });
-  con.query('SELECT * FROM practice.education_courses_master', (err, course_result, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    courses_name = course_result;
-  });
-  con.query('SELECT * FROM practice.option_master where option_id=5', (err, language_result, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    language_name = language_result;
-  });
-  con.query('SELECT * FROM practice.option_master where option_id=6', (err, technology_result, field) => {
-    if (err) {
-      return console.log(err.message);
-    }
-    technology_name = technology_result;
-  });
+  let result1 = await queryExecutor('SELECT * FROM practice.option_master where option_id=1');
+  option_value = result1;
+  let result2 = await queryExecutor('SELECT * FROM practice.option_master where option_id=2');
+  state_value = result2;
+  let result3 = await queryExecutor('SELECT * FROM practice.option_master where option_id=3');
+  pref_value = result3;
+  let result4 = await queryExecutor('SELECT * FROM practice.option_master where option_id=4');
+  department_value = result4;
+  let result5 = await queryExecutor('SELECT * FROM practice.option_master where option_id=5');
+  language_name = result5;
+  let result6 = await queryExecutor('SELECT * FROM practice.option_master where option_id=6');
+  technology_name = result6;
+  let result7 = await queryExecutor('SELECT * FROM practice.education_courses_master');
+  courses_name = result7;
   res.render("sample", { option_menu: option_value, state_menu: state_value, pref_menu: pref_value, department_menu: department_value, courses: courses_name, languages: language_name, technologies: technology_name });
 })
 
@@ -188,16 +156,16 @@ app.post('/insert', (req, res) => {
       console.log(result);
       for (let i = 0; i < result.length; i++) {
 
-        var vj = req.body[result[i].option_value];
-        var r = req.body[result[i].option_value + "r"];
-        var w = req.body[result[i].option_value + "w"];
-        var s = req.body[result[i].option_value + "s"];
-        if (typeof (r) == "undefined") r = "No";
-        if (typeof (w) == "undefined") w = "No";
-        if (typeof (s) == "undefined") s = "No";
+        var language_name = req.body[result[i].option_value];
+        var read = req.body[result[i].option_value + "r"];
+        var write = req.body[result[i].option_value + "w"];
+        var speak = req.body[result[i].option_value + "s"];
+        if (typeof (read) == "undefined") read = "No";
+        if (typeof (write) == "undefined") write = "No";
+        if (typeof (speak) == "undefined") speak = "No";
 
-        if (typeof (vj) == "string") {
-          query_lan = `INSERT INTO design.language_info (language_name, language_read, language_speak, language_write, candidate_id) VALUES ('${vj}','${r}','${s}','${w}',${id})`;
+        if (typeof (language_name) == "string") {
+          query_lan = `INSERT INTO design.language_info (language_name, language_read, language_speak, language_write, candidate_id) VALUES ('${language_name}','${read}','${speak}','${write}',${id})`;
 
           con.query(query_lan, (err, result) => {
             if (err) console.log(err.message);
@@ -215,7 +183,7 @@ app.post('/insert', (req, res) => {
       console.log(result);
       for (let i = 0; i < result.length; i++) {
         var tech = req.body[result[i].option_value]
-        var a = req.body[result[i].option_value + 'a']
+        var a = req.body[result[i].option_value + 'a'];
 
         console.log('tech data here')
         console.log(tech);
@@ -288,8 +256,8 @@ app.get('/more', (req, res) => {
 
 
 app.post('/search', (req, res) => {
-  let search_query = req.body.search_query;
-  let wc = ['^', '&', '_', '~', '%'];
+  let search_query = req.body.search_query.trim();
+  let wc = ['^', '&', '_', '~', '%', '$'];
   let search = "";
   let operation_count = 0;
   let query = "select * from design.candidate_info where ";
@@ -303,7 +271,7 @@ app.post('/search', (req, res) => {
     }
   }
 
-  let values = search.split(" ").slice(1)
+  let values = search.split(" ").slice(1); //use for split an string and then remove first element
   for (let i = 0; i < values.length; i++) {
     if (values[i][0] == '^') {
       operation_count--;
@@ -338,22 +306,80 @@ app.post('/search', (req, res) => {
       }
     }
 
-    if(values[i][0]=='%'){
+    if (values[i][0] == '%') {
       operation_count--;
-      if(operation_count){
-        query+=`designation like '%${values[i].slice(1)}%' and `;
-      }else{
-        query+=`designation like '%${values[i].slice(1)}%'`;
+      if (operation_count) {
+        query += `designation like '%${values[i].slice(1)}%' and `;
+      } else {
+        query += `designation like '%${values[i].slice(1)}%'`;
+      }
+    }
+    if (values[i][0] == '$') {
+      operation_count--;
+      if (operation_count) {
+        query += `city like '%${values[i].slice(1)}%' and `;
+      } else {
+        query += `city like '%${values[i].slice(1)}%'`;
       }
     }
   }
-  
+
   con.query(query, (err, result) => {
     let ids = ['candidate_id', 'fname', 'lname', 'designation', 'dob', 'zcode', 'gender', 'perf_location', 'expacted_ctc', 'email', 'current_ctc', 'department', 'notice_peroid', 'address', 'city', 'createdAt', 'phone', 'state'];
     res.render("basic_info", { data: result, id: ids });
   })
 })
 
+app.get('/edit', async (req, res) => {
+
+  let candidate_data = await queryExecutor(`select * from design.candidate_info where candidate_id=${req.query.id}`);
+
+  let acadamic_data = await queryExecutor(`select * from design.acadamic_info where candidate_id=${req.query.id}`);
+
+  let experience_data = await queryExecutor(`select * from design.experience_info where candidate_id=${req.query.id}`);
+
+  let language_data = await queryExecutor(`select * from design.language_info where candidate_id=${req.query.id}`);
+
+  
+  let reference_data = await queryExecutor(`select * from design.reference_info where candidate_id=${req.query.id}`);
+
+  
+
+  let state_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=2');
+
+
+  res.render("edit", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data,laanguage:language_data });
+
+
+});
+
+
+app.get('/test',async(req,res)=>{
+  let id=req.query.id;
+  let result=await queryExecutor(`SELECT * FROM practice.city_master where state_id=${id}`);
+  res.json({result});
+})
+
+app.get('/sample',(req,res)=>{
+  getData();
+})
+async function getData(){
+  let result=await fetch('http://127.0.0.1:3000/test');
+  let temp=await result.json();
+  console.log(`fetch data`);
+  console.log(temp)
+}
+
+const queryExecutor = (query) => {
+  return new Promise((resolve, reject) => {
+    con.query(query, (err, result) => {
+      resolve(result)
+      if(err){
+        reject(err);
+      }
+    })
+  })
+}
 app.listen(3000, () => {
   console.log('server is running');
 })

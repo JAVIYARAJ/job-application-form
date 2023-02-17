@@ -6,62 +6,67 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Application Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <style>
-        fieldset{
-    border-radius: 10px;
-    padding-left: 100px;
-    padding-right: 100px;
-}
-.dbl_input{
-    display: flex;
-    justify-content:space-between;
-    margin-bottom: 20px;
-}
-#container{
-    height: 400px;
-    width: 100%;
-}
-#addEduBtn{
-    font-size: 30px;
-    font-weight: 900;
-    color: black;
-}
-#state{
-    height: 30px;
-}
-.col{
-    margin: 10px;
-}
+        fieldset {
+            border-radius: 10px;
+            padding-left: 100px;
+            padding-right: 100px;
+        }
 
-#col-2{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+        .dbl_input {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
 
-}
+        /* #container {
+            height: 400px;
+            width: 100%;
+        } */
 
-#lang_cols{
-    margin: 10px;
-}
+        #addEduBtn {
+            font-size: 30px;
+            font-weight: 900;
+            color: black;
+        }
+
+        #state {
+            height: 30px;
+        }
+
+        .col {
+            margin: 10px;
+        }
+
+        #col-2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+        }
+
+        #lang_cols {
+            margin: 10px;
+        }
 
 
-#submtBtn
-{
-    background-color: cadetblue;
-    border-radius: 10px;
-    height: 30px;
-    width: 100px;
-    margin: 10px;
-}
+        #submtBtn {
+            background-color: cadetblue;
+            border-radius: 10px;
+            height: 30px;
+            width: 100px;
+            margin: 10px;
+        }
 
-.heading{
-    text-align: center;
-}
+        .heading {
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
-    <div id="container">
+    <div id="container" class="container">
         <h3 class="heading">Job Application Form</h3>
         <form action="index.html" method="get">
 
@@ -71,7 +76,7 @@
                 <div class="dbl_input">
                     <div class="col">
                         <label for="fname">First Name</label>
-                        <input type="text" name="fname" id="fname">
+                        <input class="form-control type=" text" name="fname" id="fname">
                     </div>
                     <div class="col">
                         <label for="lname">Last Name</label>
@@ -158,8 +163,8 @@
                     <div>
                         <div class="dbl_input">
                             <div class="col">
-                            <label for="edu_board${edu_counter}">Name of Course</label>
-                            <input type="text" name="edu_course${edu_counter}" id="edu_course${edu_counter}">
+                                <label for="edu_board${edu_counter}">Name of Course</label>
+                                <input type="text" name="edu_course${edu_counter}" id="edu_course${edu_counter}">
                             </div>
                             <div class="col">
                                 <label for="edu_board${edu_counter}">Name of Board</label>
@@ -167,13 +172,15 @@
                             </div>
                             <div class="col">
                                 <label for="edu_passing_year${edu_counter}">Passing year</label>
-                                <input type="text" name="edu_passing_year${edu_counter}" id="edu_passing_year${edu_counter}">
+                                <input type="text" name="edu_passing_year${edu_counter}"
+                                    id="edu_passing_year${edu_counter}">
                             </div>
                             <div class="col">
                                 <label for="edu_per${edu_counter}">Percentage</label>
                                 <input type="text" name="edu_per${edu_counter}" id="edu_per${edu_counter}">
                             </div>
-                        </div></div>
+                        </div>
+                    </div>
                 </div>
             </fieldset>
 
@@ -189,7 +196,8 @@
                     <div class="dbl_input">
                         <div class="col">
                             <label for="exe_company_name${exe_counter}">Company Name</label>
-                            <input type="text" name="exe_company_name${exe_counter}" id="exe_company_name${exe_counter}">
+                            <input type="text" name="exe_company_name${exe_counter}"
+                                id="exe_company_name${exe_counter}">
                         </div>
                         <div class="col">
                             <label for="exe_designation${exe_counter}">Designation</label>
@@ -323,5 +331,6 @@
         </form>
     </div>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
 </html>

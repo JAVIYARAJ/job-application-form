@@ -19,19 +19,26 @@
         color: green;
 
     }
+    .mt-4{
+        margin-top: 20px;
+    }
 </style>
 
 <body>
-    <div class="container-fluid">
-        <h3>Basic infomation</h3>
+    <div class="container-fluid mt-4">
 
-
+       <div class="container">
         <form action="/search" method="post">
-
-            <input type="text" class="form-control" name="search_query">
-            <input type="submit" class="btn btn-success m-3" value="search">
-
-        </form>
+            <div class="row">
+             <div class="col-sm-10">
+                 <input type="text" class="form-control" name="search_query">
+             </div>
+             <div class="col-sm">
+                 <input type="submit" class="btn btn-success m-3" value="search">
+             </div>
+            </div>
+         </form>
+       </div>
 
         <div class="container-fluid">
             <span>^ <span class="green">indicate fname</span></span>
@@ -39,7 +46,12 @@
             <span>_ <span class="green">indicate email</span></span>
             <span>~ <span class="green">indicate phone</span></span>
             <span>% <span class="green">indicate designation</span></span>
+            <span>$ <span class="green">indicate city</span></span>
         </div>
+
+        <% if(data==undefined || data.length==0) {%>
+            <center><h3>Data Not Found</h3></center>    
+        <%}else{%>
         <table border="1" class="table">
             <tr>
                 <th>candidate_id</th>
@@ -71,11 +83,15 @@
                         </td>
                         <%}%>
                             <td>
+                                <a href="/edit/?id=<%= data[i].candidate_id %>">Edit</a>
+                            </td>
+                            <td>
                                 <a href="/more/?id=<%= data[i].candidate_id %>">More</a>
                             </td>
                 </tr>
                 <%}%>
         </table>
+        <%}%>
     </div>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
