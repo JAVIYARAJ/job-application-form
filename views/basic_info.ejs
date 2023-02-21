@@ -140,7 +140,7 @@
                                     </td>
                                     <td>
                                       
-                                        <input class="form-check deleteAll" type="checkbox" name=""
+                                        <input class="form-check deleteAll" type="checkbox"
                                             id="<%= data[i].candidate_id %>">
                                     </td>
                                     </td>
@@ -151,10 +151,14 @@
     </div>
 </body>
 <script>
+
+
+//this code use for update the visiblity of delete button
     const link = document.getElementById("deleteBtn");
     link.style.display = 'none';
     const checkbox = document.querySelectorAll('.deleteAll');
     let count = 0;
+    
     checkbox.forEach((box) => {
 
         box.addEventListener('change', async () => {

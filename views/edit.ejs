@@ -20,12 +20,43 @@
         border-radius: 10px;
         border: 1px solid black;
     }
+
+    .add-btn {
+        height: 35px;
+        width: 150px;
+        background-color: aquamarine;
+        opacity: 0.8;
+        align-items: center;
+        border-radius: 10px;
+    }
+
+    .remove-btn {
+        height: 35px;
+        width: 150px;
+        background-color: crimson;
+        opacity: 0.7;
+        align-items: center;
+        border-radius: 10px;
+    }
+
+    .add-btn p {
+        text-align: center;
+        color: black;
+        cursor: pointer;
+    }
+
+    .remove-btn p {
+        text-align: center;
+        color: white;
+        cursor: pointer;
+    }
 </style>
 
 <body>
     <center>
         <h3>Update Your Data</h3>
     </center>
+
     <div class="container box mt-3 pb-3">
         <form>
 
@@ -144,7 +175,9 @@
 
 
     <div class="container box mt-3 pb-3">
-
+        <div class="add-btn mt-3">
+            <p class="pt-1">Add Education</p>
+        </div>
         <% for(let i=0;i<acadamic.length;i++){%>
             <div class="flex-box">
                 <div class="mb-3">
@@ -163,13 +196,18 @@
                     <label for="department" class="form-label">Percentage</label>
                     <input type="text" class="form-control" value="<%= acadamic[i].education_grade%>">
                 </div>
+                <div class="remove-btn mt-3">
+                    <p class="pt-1">Delete</p>
+                </div>
             </div>
             <%}%>
 
     </div>
 
     <div class="container box mt-3 pb-3">
-
+        <div class="add-btn mt-3">
+            <p class="pt-1">Add Experience</p>
+        </div>
         <% for(let i=0;i<experience.length;i++){%>
             <div class="flex-box">
                 <div class="mb-3">
@@ -188,11 +226,17 @@
                     <label for="department" class="form-label">Leaving Date</label>
                     <input type="text" class="form-control" value="<%= experience[i].candidate_leaving%>">
                 </div>
+                <div class="remove-btn mt-3">
+                    <p class="pt-1">Delete</p>
+                </div>
             </div>
             <%}%>
     </div>
-    <div class="container box mt-3 pb-3">
 
+    <div class="container box mt-3 pb-3">
+        <div class="add-btn mt-3">
+            <p class="pt-1">Add reference</p>
+        </div>
         <% for(let i=0;i<reference.length;i++){%>
             <div class="flex-box">
                 <div class="mb-3">
@@ -207,33 +251,88 @@
                     <label for="department" class="form-label">Relation</label>
                     <input type="text" class="form-control" value="<%= reference[i].person_relation%>">
                 </div>
-
+                <div class="remove-btn mt-3">
+                    <p class="pt-1">Delete</p>
+                </div>
             </div>
             <%}%>
 
 
     </div>
-    <div class="container box mt-3 pb-3">
-        <%for(let i=0;i<laanguage.length;i++){%>
-            <div class="m-3">
-                <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r" value="yes">
-                <label class="me-3" for="<%= laanguage[i].language_name %>r">
-                    <%= laanguage[i].language_name %>
-                </label>
-                <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r" value="yes">
-                <label class="me-2" for="<%= laanguage[i].language_name %>r">Read</label>
-    
-                <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>s" value="yes">
-                <label class="me-2" for="<%= laanguage[i].language_name %>s">Speak</label>
-    
-                <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>w" value="yes">
-                <label class="me-2" for="<%= laanguage[i].language_name %>w">Write</label>
-                
+
+    <div class="container box mt-3 pb-3" style="display: flex; justify-content: space-between;">
+
+        <div>
+            <p class="m-3">Languages</p>
+            <%for(let i=0;i<laanguage.length;i++){%>
+                <div class="m-3">
+                    <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
+                        value="yes">
+                    <label class="me-3" for="<%= laanguage[i].language_name %>r">
+                        <%= laanguage[i].language_name %>
+                    </label>
+                    <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
+                        value="yes">
+                    <label class="me-2" for="<%= laanguage[i].language_name %>r">Read</label>
+
+                    <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>s"
+                        value="yes">
+                    <label class="me-2" for="<%= laanguage[i].language_name %>s">Speak</label>
+
+                    <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>w"
+                        value="yes">
+                    <label class="me-2" for="<%= laanguage[i].language_name %>w">Write</label>
+
+                </div>
+                <%}%>
+        </div>
+
+        <div>
+            <p class="m-3">Technology</p>
+            <% for(let i=0;i<technology.length;i++){%>
+                <div class="m-3">
+                    <input class="form-check-input" type="checkbox" name="<%= technology[i].technology_name %>r"
+                        value="yes">
+                    <label class="me-3" for="<%= technology[i].technology_name %>r">
+                        <%= technology[i].technology_name %>
+                    </label>
+                    <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>r"
+                        value="yes">
+                    <label class="me-2" for="<%= technology[i].technology_name %>r">Benginner</label>
+
+                    <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>s"
+                        value="yes">
+                    <label class="me-2" for="<%= technology[i].technology_name %>s">Mediator</label>
+
+                    <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>w"
+                        value="yes">
+                    <label class="me-2" for="<%= technology[i].technology_name %>w">Expert</label>
+
+                </div>
+                <%}%>
+        </div>
+
+    </div>
+
+    <div class="container box mt-3">
+        <div class="flex-box">
+            <div class="mb-3">
+                <label for="notice_peroid" class="form-label">Notice Peroid</label>
+                <input type="text" class="form-control" name="notice_peroid" value="<%= data[0].notice_peroid%>">
             </div>
 
-            <%}%>
-                <button type="submit" class="btn btn-primary">Edit</button>
+            <div class="mb-3">
+                <label for="expacted_ctc" class="form-label">Expacted CTC</label>
+                <input type="text" name="expacted_ctc" class="form-control" value="<%= data[0].expacted_ctc%>">
+            </div>
+            <div class="mb-3">
+                <label for="current_ctc" class="form-label">Current CTC</label>
+                <input type="text" name="current_ctc" class="form-control" value="<%= data[0].current_ctc%>">
+            </div>
+        </div>
     </div>
+    <button type="submit" class="add-btn"
+    style="color: black;border: none; background-color: rgb(49, 186, 190); opacity: 0.8;">Update Data</button>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 

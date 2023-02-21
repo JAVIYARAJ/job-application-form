@@ -340,22 +340,22 @@ app.post('/search', (req, res) => {
 app.get('/edit', async (req, res) => {
 
   let candidate_data = await queryExecutor(`select * from design.candidate_info where candidate_id=${req.query.id}`);
+  console.log(candidate_data);
 
   let acadamic_data = await queryExecutor(`select * from design.acadamic_info where candidate_id=${req.query.id}`);
 
   let experience_data = await queryExecutor(`select * from design.experience_info where candidate_id=${req.query.id}`);
 
   let language_data = await queryExecutor(`select * from design.language_info where candidate_id=${req.query.id}`);
-
   
   let reference_data = await queryExecutor(`select * from design.reference_info where candidate_id=${req.query.id}`);
 
-  
+  let technology_data=await queryExecutor(`select * from design.technology_info where candidate_id=${req.query.id}`);
 
   let state_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=2');
 
 
-  res.render("edit", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data,laanguage:language_data });
+  res.render("edit", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data,laanguage:language_data,technology:technology_data });
 
 
 });
