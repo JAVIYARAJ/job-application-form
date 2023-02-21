@@ -86,11 +86,11 @@
                 <div class="dbl_input">
                     <div class="col">
                         <labe for="designation">Designation</label>
-                        <input type="text" name="designation" id="designation">
+                            <input type="text" name="designation" id="designation">
                     </div>
                     <div class="col">
                         <labelfor="address1">Address1</label>
-                        <input type="text" name="address1" id="address1">
+                            <input type="text" name="address1" id="address1">
                     </div>
                 </div>
                 <div class="dbl_input">
@@ -110,7 +110,13 @@
                     </div>
                     <div class="col">
                         <label for="city">city</label>
-                        <input type="text" name="city" id="city">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <select name="city" id="city_menu">
+                            <% for(let i=0;i< city.length;i++) {%>
+                                <option value="<%= city[i].city_name %>">
+                                    <%= city[i].city_name %>
+                            </option>
+                        <%}%>
+                        </select>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </div>
                 </div>
                 <div class="dbl_input">
@@ -122,11 +128,11 @@
                     </div>
                     <div id="state-div">
                         <label for="state">State</label>
-                        <select name="state" id="state">
+                        <select name="state" id="state_menu" onchange="updateCity()">
 
                             <% for(let i=0;i< state_menu.length;i++) {%>
-                                <option value="<%= state_menu[i].option_value %>">
-                                    <%= state_menu[i].option_value %>
+                                <option value="<%= state_menu[i].state_id %>">
+                                    <%= state_menu[i].state_name %>
                                 </option>
                                 <%}%>
 
@@ -159,7 +165,7 @@
                 </div>
 
             </fieldset>
-            
+
             <!-- Education infomation -->
             <fieldset id="edu_info">
                 <legend>
@@ -180,7 +186,7 @@
                                         </option>
                                         <%}%>
                                 </select>
-                               
+
                             </div>
                             <div class="col">
                                 <label for="institution">Name of Board</label>
@@ -212,8 +218,7 @@
                     <div class="dbl_input">
                         <div class="col">
                             <label for="exe_company_name">Company Name</label>
-                            <input type="text" name="exe_company_name"
-                                >
+                            <input type="text" name="exe_company_name">
                         </div>
                         <div class="col">
                             <label for="exe_designation">Designation</label>
@@ -240,10 +245,11 @@
 
                     <legend>Language Know</legend>
                     <div id="lang_info">
-                       
+
                         <% for(let i=0;i<languages.length;i++) {%>
                             <div id="lang_cols">
-                                <input type="checkbox" name="<%= languages[i].option_value %>" value="<%= languages[i].option_value %>">
+                                <input type="checkbox" name="<%= languages[i].option_value %>"
+                                    value="<%= languages[i].option_value %>">
                                 <label for="<%= languages[i].option_value %>">
                                     <%= languages[i].option_value %>
                                 </label>
@@ -257,8 +263,8 @@
                                 <input type="checkbox" name="<%= languages[i].option_value %>w" value="yes">
                                 <label for="<%= languages[i].option_value %>w">Write</label>
                             </div>
-                        <%}%>
-                        
+                            <%}%>
+
                     </div>
 
                     <!-- Technology infomation -->
@@ -269,23 +275,24 @@
                         <% for(let i=0;i<technologies.length;i++) {%>
                             <div id="lang_cols">
 
-                                <input type="checkbox" name="<%= technologies[i].option_value %>" value="<%= technologies[i].option_value %>">
+                                <input type="checkbox" name="<%= technologies[i].option_value %>"
+                                    value="<%= technologies[i].option_value %>">
                                 <label for="tech_main">
                                     <%= technologies[i].option_value %>
                                 </label>
-                                
+
                                 <input type="radio" name="<%= technologies[i].option_value %>a" value="beginner">
                                 <label for="<%= technologies[i].option_value %>a">Beginner</label>
-    
+
                                 <input type="radio" name="<%= technologies[i].option_value %>a" value="mideator">
                                 <label for="<%= technologies[i].option_value %>a">Mideator</label>
-                                
+
                                 <input type="radio" name="<%= technologies[i].option_value %>a" value="expert">
                                 <label for="<%= technologies[i].option_value %>a">Expert</label>
 
                             </div>
-                        <%}%>
-                        
+                            <%}%>
+
 
                     </div>
                 </fieldset>
@@ -315,7 +322,7 @@
                             <label for="ref_relation">Relation</label>
                             <input type="text" name="ref_relation">
                         </div>
-                
+
                     </div>
                 </div>
             </fieldset>
@@ -366,7 +373,31 @@
         </form>
     </div>
 </body>
-    <script>
+<script>
+
+    async function updateCity() {
+        const stateDropdown = document.getElementById('state_menu');
+
+        try {
+            const response = await fetch(`/cities/?state_id=${stateDropdown.value}`);
+            const city = await response.json();
+            updateOptions(city);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    function updateOptions(cities) {
+        const cityDropdown = document.getElementById('city_menu');
+        cityDropdown.innerHTML = '';
+
+        for (let i = 0; i < cities.length; i++) {
+            const option = document.createElement('option');
+            option.value = cities[i].city_name;
+            option.text = cities[i].city_name;
+            cityDropdown.appendChild(option);
+        }
+    }
 
     //counter declaration for set dynamic ids in html element
     var edu_counter = 1;
@@ -388,22 +419,22 @@
     ];
 
 
-    var edu=document.getElementById("addEdu");
-    var exe=document.getElementById("exeBtn");
-    var ref=document.getElementById("refBtn");
-    edu.addEventListener('click',()=>{
+    var edu = document.getElementById("addEdu");
+    var exe = document.getElementById("exeBtn");
+    var ref = document.getElementById("refBtn");
+    edu.addEventListener('click', () => {
         addEducationCard();
     });
-    exe.addEventListener('click',()=>{
+    exe.addEventListener('click', () => {
         addEdxperienceCard();
     });
-    ref.addEventListener('click',()=>{
+    ref.addEventListener('click', () => {
         addRefrenceCard();
     });
 
 
     function addEducationCard() {
-        
+
         edu_counter++;
         var edu_card = document.getElementById("edu_info");
         var create_div = document.createElement("div");
@@ -493,5 +524,8 @@
         create_div.innerHTML = content;
         ref_card.appendChild(create_div);
     }
-    </script>
+
+
+</script>
+
 </html>

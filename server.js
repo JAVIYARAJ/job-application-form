@@ -3,6 +3,7 @@ const bodyparser = require('body-parser');
 const ejs = require('ejs');
 const mysql = require('mysql2');
 const con = require('./db/dbconnect');
+const { response } = require('express');
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyparser.urlencoded({ extended: false }));
@@ -14,13 +15,16 @@ let department_value;
 let courses_name;
 let language_name;
 let technology_name;
+let city_values;
 app.get('/', async (req, res) => {
 
   //this query use for get data for drop down menu
   let result1 = await queryExecutor('SELECT * FROM practice.option_master where option_id=1');
   option_value = result1;
-  let result2 = await queryExecutor('SELECT * FROM practice.option_master where option_id=2');
+  let result2 = await queryExecutor('SELECT * FROM practice.state_master;');
   state_value = result2;
+  let result8 = await queryExecutor('SELECT * FROM practice.city_master where state_id=1;');
+  city_values = result8;
   let result3 = await queryExecutor('SELECT * FROM practice.option_master where option_id=3');
   pref_value = result3;
   let result4 = await queryExecutor('SELECT * FROM practice.option_master where option_id=4');
@@ -31,15 +35,19 @@ app.get('/', async (req, res) => {
   technology_name = result6;
   let result7 = await queryExecutor('SELECT * FROM practice.education_courses_master');
   courses_name = result7;
-  res.render("sample", { option_menu: option_value, state_menu: state_value, pref_menu: pref_value, department_menu: department_value, courses: courses_name, languages: language_name, technologies: technology_name });
+  res.render("sample", { option_menu: option_value, state_menu: state_value, pref_menu: pref_value, department_menu: department_value, courses: courses_name, languages: language_name, technologies: technology_name,city:city_values });
 })
 
-app.post('/insert', (req, res) => {
+app.post('/insert', async(req, res) => {
   let id;
   const { fname, lname, designation, address1, address2, email, phone, city, gender, relationship, state, dob, zcode, department, expacted_ctc, notice_period, current_ctc, pref_location } = req.body
 
-  let basic_query = `INSERT INTO design.candidate_info (fname, lname, designation, dob, zcode, gender, perf_location, expacted_ctc, email, current_ctc, department, notice_peroid, address, city, createdAt, phone,state) VALUES ('${fname}', '${lname}', '${designation}', '${dob}', '${zcode}', '${gender}', '${pref_location}', '${expacted_ctc}', '${email}', '${current_ctc}', '${department}', '${current_ctc}', '${address1 + " " + address2}', '${city}',CURRENT_TIMESTAMP, '${phone}','${state}');`;
+  const state_value=await queryExecutor(`SELECT * FROM state_master where state_id=${parseInt(state)}`);
+  
 
+
+  let basic_query = `INSERT INTO design.candidate_info (fname, lname, designation, dob, zcode, gender, perf_location, expacted_ctc, email, current_ctc, department, notice_peroid, address, city, createdAt, phone,state) VALUES ('${fname}', '${lname}', '${designation}', '${dob}', '${zcode}', '${gender}', '${pref_location}', '${expacted_ctc}', '${email}', '${current_ctc}', '${department}', '${current_ctc}', '${address1 + " " + address2}', '${city}',CURRENT_TIMESTAMP, '${phone}','${state_value[0].state_name}');`;
+  
   con.query(basic_query, (err, result1) => {
     console.log(result1, 'basic info insert success');
 
@@ -50,7 +58,7 @@ app.post('/insert', (req, res) => {
 
     console.log(Course, institution, Percentage, Passing_Year);
 
-
+    
     if (typeof (Course, institution, Percentage, Passing_Year) == "string") {
       var edu_query = `INSERT INTO design.acadamic_info (course_name, education_board, education_year, education_grade, candidate_id) values ('${Course}',
             '${institution}','${Passing_Year}','${Percentage}',${id})`;
@@ -185,11 +193,6 @@ app.post('/insert', (req, res) => {
         var tech = req.body[result[i].option_value]
         var a = req.body[result[i].option_value + 'a'];
 
-        console.log('tech data here')
-        console.log(tech);
-        console.log(a);
-
-
         if (typeof (tech) == "string") {
           var query_tech = `INSERT INTO design.technology_info (technology_name, technology_level, candidate_id) VALUES ('${tech}','${a}',${id})`;
           console.log(query_tech);
@@ -216,15 +219,11 @@ app.post('/insert', (req, res) => {
 });
 
 
-app.get('/job-info', (req, res) => {
+app.get('/job-info', async(req, res) => {
   let ids = ['candidate_id', 'fname', 'lname', 'designation', 'dob', 'zcode', 'gender', 'perf_location', 'expacted_ctc', 'email', 'current_ctc', 'department', 'notice_peroid', 'address', 'city', 'createdAt', 'phone', 'state'];
-  con.query(`SELECT * FROM design.candidate_info`, (err, result1, filed) => {
-    if (err) {
-      return console.log(err.message);
-    } else {
-      res.render("basic_info", { data: result1, id: ids });
-    }
-  })
+
+  const info=await queryExecutor('SELECT * FROM design.candidate_info where isDeleted=0');
+  res.render("basic_info", { data: info, id: ids });
 });
 
 app.get('/more', (req, res) => {
@@ -257,7 +256,7 @@ app.get('/more', (req, res) => {
 
 app.post('/search', (req, res) => {
   let search_query = req.body.search_query.trim();
-  let wc = ['^', '&', '_', '~', '%', '$'];
+  let wc = ['^', '&', '_', '~', '%', '$','!'];
   let search = "";
   let operation_count = 0;
   let query = "select * from design.candidate_info where ";
@@ -322,6 +321,14 @@ app.post('/search', (req, res) => {
         query += `city like '%${values[i].slice(1)}%'`;
       }
     }
+    if (values[i][0] == '!') {
+      operation_count--;
+      if (operation_count) {
+        query += `state like '%${values[i].slice(1)}%' and `;
+      } else {
+        query += `state like '%${values[i].slice(1)}%'`;
+      }
+    }
   }
 
   con.query(query, (err, result) => {
@@ -352,17 +359,27 @@ app.get('/edit', async (req, res) => {
 
 
 });
-
-
-app.get('/test',async(req,res)=>{
-  let id=req.query.id;
-  let result=await queryExecutor(`SELECT * FROM practice.city_master where state_id=${id}`);
-  res.json({result});
+//use for dynamic drop down
+app.get('/cities',async(req,res)=>{
+  const state_id=req.query.state_id;
+  const city=await queryExecutor(`SELECT * FROM practice.city_master where  state_id=${state_id};`);
+  res.send(city);
 })
 
-app.get('/sample',(req,res)=>{
-  getData();
+app.get('/delete',async(req,res)=>{
+  const record_id=req.query.id;
+  const result=await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(record_id)};`);
 })
+
+app.get('/delete-multiple',async(req,res)=>{
+  const record_id=req.query.id;
+  const ids=record_id.split(",");
+  for(let i=0;i<ids.length;i++){
+    let id=parseInt(ids[i]);
+    const result=await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(id)};`);
+  }
+})
+
 async function getData(){
   let result=await fetch('http://127.0.0.1:3000/test');
   let temp=await result.json();
