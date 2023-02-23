@@ -35,19 +35,20 @@ app.get('/', async (req, res) => {
   technology_name = result6;
   let result7 = await queryExecutor('SELECT * FROM practice.education_courses_master');
   courses_name = result7;
-  res.render("sample", { option_menu: option_value, state_menu: state_value, pref_menu: pref_value, department_menu: department_value, courses: courses_name, languages: language_name, technologies: technology_name,city:city_values });
+
+  res.render("sample", { option_menu: option_value, state_menu: state_value, pref_menu: pref_value, department_menu: department_value, courses: courses_name, languages: language_name, technologies: technology_name, city: city_values });
 })
 
-app.post('/insert', async(req, res) => {
+app.post('/insert', async (req, res) => {
   let id;
   const { fname, lname, designation, address1, address2, email, phone, city, gender, relationship, state, dob, zcode, department, expacted_ctc, notice_period, current_ctc, pref_location } = req.body
 
-  const state_value=await queryExecutor(`SELECT * FROM state_master where state_id=${parseInt(state)}`);
-  
+  const state_value = await queryExecutor(`SELECT * FROM state_master where state_id=${parseInt(state)}`);
+
 
 
   let basic_query = `INSERT INTO design.candidate_info (fname, lname, designation, dob, zcode, gender, perf_location, expacted_ctc, email, current_ctc, department, notice_peroid, address, city, createdAt, phone,state) VALUES ('${fname}', '${lname}', '${designation}', '${dob}', '${zcode}', '${gender}', '${pref_location}', '${expacted_ctc}', '${email}', '${current_ctc}', '${department}', '${current_ctc}', '${address1 + " " + address2}', '${city}',CURRENT_TIMESTAMP, '${phone}','${state_value[0].state_name}');`;
-  
+
   con.query(basic_query, (err, result1) => {
     console.log(result1, 'basic info insert success');
 
@@ -58,7 +59,7 @@ app.post('/insert', async(req, res) => {
 
     console.log(Course, institution, Percentage, Passing_Year);
 
-    
+
     if (typeof (Course, institution, Percentage, Passing_Year) == "string") {
       var edu_query = `INSERT INTO design.acadamic_info (course_name, education_board, education_year, education_grade, candidate_id) values ('${Course}',
             '${institution}','${Passing_Year}','${Percentage}',${id})`;
@@ -201,14 +202,7 @@ app.post('/insert', async(req, res) => {
             if (err) console.log(err.message);
             else {
               res.send("success");
-              // let ids = ['candidate_id', 'fname', 'lname', 'designation', 'dob', 'zcode', 'gender', 'perf_location', 'expacted_ctc', 'email', 'current_ctc', 'department', 'notice_peroid', 'address', 'city', 'createdAt', 'phone', 'state'];
-              // con.query(`SELECT * FROM design.candidate_info`, (err, result1, filed) => {
-              //   if (err) {
-              //     return console.log(err.message);
-              //   } else {
-              //     res.render("basic_info", { data: result1, id: ids });
-              //   }
-              // })
+
             }
           })
         }
@@ -219,10 +213,10 @@ app.post('/insert', async(req, res) => {
 });
 
 
-app.get('/job-info', async(req, res) => {
+app.get('/job-info', async (req, res) => {
   let ids = ['candidate_id', 'fname', 'lname', 'designation', 'dob', 'zcode', 'gender', 'perf_location', 'expacted_ctc', 'email', 'current_ctc', 'department', 'notice_peroid', 'address', 'city', 'createdAt', 'phone', 'state'];
 
-  const info=await queryExecutor('SELECT * FROM design.candidate_info where isDeleted=0');
+  const info = await queryExecutor('SELECT * FROM design.candidate_info where isDeleted=0');
   res.render("basic_info", { data: info, id: ids });
 });
 
@@ -256,7 +250,7 @@ app.get('/more', (req, res) => {
 
 app.post('/search', (req, res) => {
   let search_query = req.body.search_query.trim();
-  let wc = ['^', '&', '_', '~', '%', '$','!'];
+  let wc = ['^', '&', '_', '~', '%', '$', '!'];
   let search = "";
   let operation_count = 0;
   let query = "select * from design.candidate_info where ";
@@ -340,49 +334,107 @@ app.post('/search', (req, res) => {
 app.get('/edit', async (req, res) => {
 
   let candidate_data = await queryExecutor(`select * from design.candidate_info where candidate_id=${req.query.id}`);
-  console.log(candidate_data);
 
+  console.log(candidate_data)
   let acadamic_data = await queryExecutor(`select * from design.acadamic_info where candidate_id=${req.query.id}`);
 
   let experience_data = await queryExecutor(`select * from design.experience_info where candidate_id=${req.query.id}`);
 
   let language_data = await queryExecutor(`select * from design.language_info where candidate_id=${req.query.id}`);
-  
+
   let reference_data = await queryExecutor(`select * from design.reference_info where candidate_id=${req.query.id}`);
 
-  let technology_data=await queryExecutor(`select * from design.technology_info where candidate_id=${req.query.id}`);
+  let technology_data = await queryExecutor(`select * from design.technology_info where candidate_id=${req.query.id}`);
 
-  let state_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=2');
+  let state_res = await queryExecutor('SELECT * FROM practice.state_master;');
+
+  let department_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=4;');
+
+  let prefered_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=3;');
 
 
-  res.render("edit", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data,laanguage:language_data,technology:technology_data });
 
 
+  const state = candidate_data[0].state;
+  var state_id;
+
+  if (state == 'Gujarat') {
+    state_id = 1;
+  }
+
+  if (state == 'Haryana') {
+    state_id = 2;
+  }
+  if (state == 'Jharkhand') {
+    state_id = 3;
+  }
+  if (state == 'Assam') {
+    state_id = 4;
+  }
+  if (state == 'Bihar') {
+    state_id = 5;
+  }
+  if (state == 'Goa') {
+    state_id = 6;
+  }
+
+  let city_res = await queryExecutor(`SELECT * FROM practice.city_master where state_id=${state_id}`);
+
+
+
+  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res });
 });
+
 //use for dynamic drop down
-app.get('/cities',async(req,res)=>{
-  const state_id=req.query.state_id;
-  const city=await queryExecutor(`SELECT * FROM practice.city_master where  state_id=${state_id};`);
+app.get('/cities', async (req, res) => {
+  const state_id = req.query.state_id;
+  const city = await queryExecutor(`SELECT * FROM practice.city_master where  state_id=${state_id};`);
   res.send(city);
 })
 
-app.get('/delete',async(req,res)=>{
-  const record_id=req.query.id;
-  const result=await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(record_id)};`);
+app.get('/delete', async (req, res) => {
+  const record_id = req.query.id;
+  const result = await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(record_id)};`);
 })
 
-app.get('/delete-multiple',async(req,res)=>{
-  const record_id=req.query.id;
-  const ids=record_id.split(",");
-  for(let i=0;i<ids.length;i++){
-    let id=parseInt(ids[i]);
-    const result=await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(id)};`);
+app.get('/delete-multiple', async (req, res) => {
+  const record_id = req.query.id;
+  const ids = record_id.split(",");
+  for (let i = 0; i < ids.length; i++) {
+    let id = parseInt(ids[i]);
+    const result = await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(id)};`);
   }
 })
 
-async function getData(){
-  let result=await fetch('http://127.0.0.1:3000/test');
-  let temp=await result.json();
+app.post('/update-data', async (req, res) => {
+  const data = req.body;
+  console.log(data);
+  let update_query = `
+update design.candidate_info set 
+candidate_info.fname='${data.fname}',
+candidate_info.lname='${data.lname}',
+candidate_info.designation='${data.designation}',
+candidate_info.dob='${data.dob}',
+candidate_info.zcode='${data.zcode}',
+candidate_info.gender='${data.gender}',
+candidate_info.perf_location='${data.pref_location}',
+candidate_info.expacted_ctc='${data.expacted_ctc}',
+candidate_info.email='${data.email}',
+candidate_info.current_ctc='${data.current_ctc}',
+candidate_info.department='${data.department}',
+candidate_info.notice_peroid='${data.notice_peroid}',
+candidate_info.address='${data.address}',
+candidate_info.city='${data.city}',
+candidate_info.phone='${data.phone}',
+candidate_info.state='${data.state}' where candidate_info.candidate_id=${data.id};`;
+
+  const result = await queryExecutor(update_query);
+  console.log(result);
+})
+
+async function getData() {
+  let result = await fetch('http://127.0.0.1:3000/test');
+  let temp = await result.json();
   console.log(`fetch data`);
   console.log(temp)
 }
@@ -391,7 +443,7 @@ const queryExecutor = (query) => {
   return new Promise((resolve, reject) => {
     con.query(query, (err, result) => {
       resolve(result)
-      if(err){
+      if (err) {
         reject(err);
       }
     })
