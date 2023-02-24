@@ -16,6 +16,7 @@ let courses_name;
 let language_name;
 let technology_name;
 let city_values;
+
 app.get('/', async (req, res) => {
 
   //this query use for get data for drop down menu
@@ -247,7 +248,6 @@ app.get('/more', (req, res) => {
   })
 });
 
-
 app.post('/search', (req, res) => {
   let search_query = req.body.search_query.trim();
   let wc = ['^', '&', '_', '~', '%', '$', '!'];
@@ -335,25 +335,49 @@ app.get('/edit', async (req, res) => {
 
   let candidate_data = await queryExecutor(`select * from design.candidate_info where candidate_id=${req.query.id}`);
 
-  console.log(candidate_data)
   let acadamic_data = await queryExecutor(`select * from design.acadamic_info where candidate_id=${req.query.id}`);
 
   let experience_data = await queryExecutor(`select * from design.experience_info where candidate_id=${req.query.id}`);
 
   let language_data = await queryExecutor(`select * from design.language_info where candidate_id=${req.query.id}`);
-
+  
   let reference_data = await queryExecutor(`select * from design.reference_info where candidate_id=${req.query.id}`);
-
+  
   let technology_data = await queryExecutor(`select * from design.technology_info where candidate_id=${req.query.id}`);
-
+  console.log(technology_data)
+  
   let state_res = await queryExecutor('SELECT * FROM practice.state_master;');
 
   let department_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=4;');
 
   let prefered_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=3;');
 
+  let courses = await queryExecutor('SELECT * FROM practice.education_courses_master;');
 
 
+  let languages = await queryExecutor('SELECT * FROM practice.option_master where option_id=5;');
+
+
+  const newLanguages = [];
+  const newTechnology=[];
+
+  
+  // console.log(language_data);
+  // console.log(languages)
+  // let candidate_lang = [];
+  // let all_languages = [];
+
+  // for (let i = 0; i < language_data.length; i++) {
+  //   candidate_lang.push(language_data[i].language_name);
+  // }
+
+  // for (let j = 0; j < languages.length; j++) {
+  //   all_languages.push(languages[j].option_value);
+  // }
+
+  // const remaning_lang=[];
+  // const diff=languages.length-language_data.length;
+  
 
   const state = candidate_data[0].state;
   var state_id;
@@ -380,9 +404,7 @@ app.get('/edit', async (req, res) => {
 
   let city_res = await queryExecutor(`SELECT * FROM practice.city_master where state_id=${state_id}`);
 
-
-
-  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res });
+  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res, courses: courses, language_list: languages });
 });
 
 //use for dynamic drop down
@@ -408,7 +430,6 @@ app.get('/delete-multiple', async (req, res) => {
 
 app.post('/update-data', async (req, res) => {
   const data = req.body;
-  console.log(data);
   let update_query = `
 update design.candidate_info set 
 candidate_info.fname='${data.fname}',
@@ -429,7 +450,163 @@ candidate_info.phone='${data.phone}',
 candidate_info.state='${data.state}' where candidate_info.candidate_id=${data.id};`;
 
   const result = await queryExecutor(update_query);
-  console.log(result);
+  res.redirect(`/edit/?id=${data.id}`);
+})
+
+app.post('/update-data/edu', (req, res) => {
+  //education
+  const { Course, institution, Percentage, Passing_Year, id, edu_id } = req.body
+
+  if (typeof (Course, institution, Percentage, Passing_Year, edu_id) == "string") {
+    var edu_query =
+      `update design.acadamic_info set acadamic_info.course_name='${Course}',
+      acadamic_info.education_board='${institution}',
+      acadamic_info.education_year='${Passing_Year}',
+      acadamic_info.education_grade='${Percentage}' where acadamic_info.acadamic_id=${parseInt(edu_id)};`;
+
+    con.query(edu_query, (err, result2) => {
+      if (err) return console.log(err.message);
+      else {
+        res.redirect(`/edit/?id=${id}`)
+        console.log(result2, 'acadamic insert success');
+      }
+
+    })
+  }
+  else {
+    for (let i = 0; i < Course.length; i++) {
+
+      let edu_query = `update design.acadamic_info set acadamic_info.course_name='${Course[i]}',
+      acadamic_info.education_board='${institution[i]}',
+      acadamic_info.education_year='${Passing_Year[i]}',
+      acadamic_info.education_grade='${Percentage[i]}' where acadamic_info.acadamic_id=${parseInt(edu_id[i])};`;
+
+      console.log(edu_query);
+
+      con.query(edu_query, (err, result2) => {
+        if (err) return console.log(err.message);
+        else {
+          res.redirect(`/edit/?id=${id}`)
+          console.log(result2, 'acadamic insert success');
+        }
+
+      })
+
+    }
+  }
+
+})
+
+app.post('/update-data/exe', async (req, res) => {
+  //experience
+  const { exe_company_name, exe_designation, exe_from, exe_to, exe_id, id } = req.body
+
+  console.log(exe_company_name, exe_designation, exe_from, exe_to, exe_id);
+
+  if (typeof (exe_company_name, exe_designation, exe_from, exe_to, exe_id) == "string") {
+    let exe_query = `update design.experience_info set experience_info.company_name='${exe_company_name}',
+    experience_info.candidate_position='${exe_designation}',
+    experience_info.candidate_joining='${exe_from}',
+    experience_info.candidate_leaving='${exe_to}' where experience_info.exprience_id=${exe_id};`;
+    con.query(exe_query, (err, result3) => {
+      if (err) return console.log(err.message);
+      else {
+        res.redirect(`/edit/?id=${id}`)
+      }
+
+    })
+  }
+  else {
+    for (let i = 0; i < exe_company_name.length; i++) {
+
+      let exe_query = `update design.experience_info set experience_info.company_name='${exe_company_name[i]}',
+      experience_info.candidate_position='${exe_designation[i]}',
+      experience_info.candidate_joining='${exe_from[i]}',
+      experience_info.candidate_leaving='${exe_to[i]}' where experience_info.exprience_id=${exe_id[i]};`;
+      con.query(exe_query, (err, result3) => {
+        if (err) return console.log(err.message);
+        else {
+          res.redirect(`/edit/?id=${id}`)
+        }
+
+      })
+
+    }
+  }
+
+
+})
+
+app.post('/update-data/ref', async (req, res) => {
+
+  const { ref_name, ref_number, ref_relation, ref_id, id } = req.body
+
+  console.log(ref_name, ref_number, ref_relation, ref_id);
+
+
+  if (typeof (ref_name, ref_number, ref_relation, ref_id) == "string") {
+    var ref_query = `update design.reference_info set reference_info.person_name='${ref_name}',
+    reference_info.person_contact='${ref_number}',
+    reference_info.person_relation='${ref_relation}' where reference_info.reference_id=${ref_id}`;
+    con.query(ref_query, (err, result4) => {
+      if (err) return console.log(err.message);
+      else {
+        res.redirect(`/edit/?id=${id}`)
+      }
+
+    })
+  }
+  else {
+    for (let i = 0; i < ref_name.length; i++) {
+
+      var ref_query = `update design.reference_info set reference_info.person_name='${ref_name[i]}',
+      reference_info.person_contact='${ref_number[i]}',
+      reference_info.person_relation='${ref_relation[i]}' where reference_info.reference_id=${ref_id[i]}`;
+
+      con.query(ref_query, (err, result4) => {
+        if (err) return console.log(err.message);
+        else {
+          res.redirect(`/edit/?id=${id}`)
+        }
+
+      })
+
+    }
+  }
+
+
+})
+
+app.post('/update-data/language',(req,res)=>{
+  const data=req.body;
+  console.log(data);
+
+  con.query(`SELECT * FROM practice.option_master where option_id=5;`, (err, result) => {
+    var query_lan;
+    console.log(result);
+    for (let i = 0; i < result.length; i++) {
+
+      var language_name = req.body[result[i].option_value];
+      var read = req.body[result[i].option_value + "r"];
+      var write = req.body[result[i].option_value + "w"];
+      var speak = req.body[result[i].option_value + "s"];
+      if (typeof (read) == "undefined") read = "No";
+      if (typeof (write) == "undefined") write = "No";
+      if (typeof (speak) == "undefined") speak = "No";
+
+      if (typeof (language_name) == "string") {
+        query_lan = `INSERT INTO design.language_info (language_name, language_read, language_speak, language_write, candidate_id) VALUES ('${language_name}','${read}','${speak}','${write}',${id})`;
+
+        console.log(query_lan);
+        // con.query(query_lan, (err, result) => {
+        //   if (err) console.log(err.message);
+        //   else {
+        //     console.log(result, "successfully insert languages");
+        //   }
+        // })
+      }
+    }
+  })
 })
 
 async function getData() {
