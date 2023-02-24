@@ -578,33 +578,41 @@ app.post('/update-data/ref', async (req, res) => {
 })
 
 app.post('/update-data/language',(req,res)=>{
-  const data=req.body;
-  console.log(data);
-
-  con.query(`SELECT * FROM practice.option_master where option_id=5;`, (err, result) => {
+  console.log(req.body)
+  const id=req.body.lang_id;
+  const lang_id=req.body.lang_id;
+  con.query(`SELECT * FROM design.language_info where candidate_id=${req.body.id};`, (err, result) => {
     var query_lan;
     console.log(result);
     for (let i = 0; i < result.length; i++) {
 
-      var language_name = req.body[result[i].option_value];
-      var read = req.body[result[i].option_value + "r"];
-      var write = req.body[result[i].option_value + "w"];
-      var speak = req.body[result[i].option_value + "s"];
+      var language_name = result[i].language_name;
+      var read = req.body[result[i].language_name + "r"];
+      var write = req.body[result[i].language_name + "w"];
+      var speak = req.body[result[i].language_name + "s"];
       if (typeof (read) == "undefined") read = "No";
       if (typeof (write) == "undefined") write = "No";
       if (typeof (speak) == "undefined") speak = "No";
 
       if (typeof (language_name) == "string") {
-        query_lan = `INSERT INTO design.language_info (language_name, language_read, language_speak, language_write, candidate_id) VALUES ('${language_name}','${read}','${speak}','${write}',${id})`;
+      query_lan = `update design.language_info set language_info.language_name='',
+      language_info.language_read='${read}',
+      language_info.language_speak='${speak}',
+      language_info.language_write='${write}' where language_info.language_id=${lang_id[i]}`;
+      console.log(query_lan);
+      
+        
+      con.query(query_lan, (err, result4) => {
+        if (err) return console.log(err.message);
+        else {
+          res.redirect(`/edit/?id=${id}`)
+        }
 
-        console.log(query_lan);
-        // con.query(query_lan, (err, result) => {
-        //   if (err) console.log(err.message);
-        //   else {
-        //     console.log(result, "successfully insert languages");
-        //   }
-        // })
+      })
+
+
       }
+     
     }
   })
 })

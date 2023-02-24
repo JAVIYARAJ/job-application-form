@@ -440,9 +440,9 @@
                 <%for(let i=0;i<laanguage.length;i++){%>
                     <div class="m-3">
                         <input type="hidden" value="<%= laanguage[i].language_id %>" name="lang_id">
-                        <input class="form-check-input" type="checkbox" name="<%=laanguage[i].language_name %>r"
+                        <input class="form-check-input" type="checkbox" name="<%=laanguage[i].language_name %>"
                             value="yes" checked>
-                        <label class="me-3" for="<%= laanguage[i].language_name %>r">
+                        <label class="me-3" for="<%= laanguage[i].language_name %>">
                             <%= laanguage[i].language_name %>
                         </label>
                         <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
