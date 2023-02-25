@@ -191,10 +191,6 @@
                                     <%}%>
                     </div>
 
-
-
-
-
                 </div>
 
                 <div class="flex-box">
@@ -436,38 +432,42 @@
             <div>
                 <p class="m-3">Languages</p>
                 <form action="/update-data/language" method="post">
-                    <input type="hidden" value="<%= data[0].candidate_id %>" name="id">
-                <%for(let i=0;i<laanguage.length;i++){%>
-                    <div class="m-3">
-                        <input type="hidden" value="<%= laanguage[i].language_id %>" name="lang_id">
-                        <input class="form-check-input" type="checkbox" name="<%=laanguage[i].language_name %>"
-                            value="yes" checked>
-                        <label class="me-3" for="<%= laanguage[i].language_name %>">
-                            <%= laanguage[i].language_name %>
-                        </label>
-                        <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
-                            value="yes"  <%if(laanguage[i].language_read=='yes'){%>
+                    <input type="hidden" value="<%=data[0].candidate_id%>" name="id">
+                    <%for(let i=0;i<laanguage.length;i++){%>
+                        <div class="m-3">
+                            <input type="hidden" value="<%= laanguage[i].language_id %>" name="lang_id">
+                            <input class="form-check-input" type="checkbox" name="<%=laanguage[i].language_name%>"
+                                value="<%=laanguage[i].language_name%>" checked>
+
+                            <label class="me-3" for="<%= laanguage[i].language_name %>">
+                                <%= laanguage[i].language_name %>
+                            </label>
+
+                            <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
+                                value="yes" <%if(laanguage[i].language_read=='yes' ){%>
+                            checked
+                            <%}%>>
+                                <label class="me-2" for="<%= laanguage[i].language_name %>r">Read</label>
+
+                                <input class="form-check-input" type="checkbox"
+                                    name="<%= laanguage[i].language_name %>s" value="yes"
+                                    <%if(laanguage[i].language_speak=='yes' ){%>
                                 checked
                                 <%}%>>
-                        <label class="me-2" for="<%= laanguage[i].language_name %>r">Read</label>
+                                    <label class="me-2" for="<%= laanguage[i].language_name %>s">Speak</label>
 
-                        <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>s"
-                            value="yes" <%if(laanguage[i].language_speak=='yes'){%>
-                                checked
-                                <%}%>>
-                        <label class="me-2" for="<%= laanguage[i].language_name %>s">Speak</label>
+                                    <input class="form-check-input" type="checkbox"
+                                        name="<%= laanguage[i].language_name %>w" value="yes"
+                                        <%if(laanguage[i].language_write=='yes' ){%>
+                                    checked
+                                    <%}%>>
+                                        <label class="me-2" for="<%= laanguage[i].language_name %>w">Write</label>
 
-                        <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>w"
-                            value="yes" <%if(laanguage[i].language_write=='yes'){%>
-                                checked
-                                <%}%>>
-                        <label class="me-2" for="<%= laanguage[i].language_name %>w">Write</label>
-
-                    </div>
-                    <%}%>
+                        </div>
+                        <%}%>
             </div>
             <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
-        </form>
+            </form>
         </div>
 
     </div>
@@ -476,34 +476,40 @@
 
         <div class="container box mt-3 pb-3">
             <p class="m-3">Technology</p>
-            <% for(let i=0;i<technology.length;i++){%>
-                <div class="m-3">
-                    <input class="form-check-input" type="checkbox" name="<%= technology[i].technology_name %>r"
-                        value="yes" checked>
-                    <label class="me-3" for="<%= technology[i].technology_name %>r">
-                        <%= technology[i].technology_name %>
-                    </label>
-                    <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>r"
-                        value="yes" <%if(technology[i].technology_level=='beginner'){%>
-                            checked
-                            <%}%>>
-                    <label class="me-2" for="<%= technology[i].technology_name %>r">Benginner</label>
+            <form action="/update-data/technology" method="post">
+                <input type="hidden" value="<%=data[0].candidate_id%>" name="id">
+                <% for(let i=0;i<technology.length;i++){%>
+                    <div class="m-3">
+                        <input type="hidden" value="<%= technology[i].tech_id %>" name="tech_id">
+                        <input class="form-check-input" type="checkbox" name="<%= technology[i].technology_name %>"
+                            value="<%= technology[i].technology_name %>" checked>
+                        <label class="me-3" for="<%= technology[i].technology_name %>a">
+                            <%= technology[i].technology_name %>
+                        </label>
 
-                    <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>s"
-                        value="yes" <%if(technology[i].technology_level=='mideator'){%>
-                            checked
-                            <%}%>>
-                    <label class="me-2" for="<%= technology[i].technology_name %>s">Mediator</label>
+                        <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>a"
+                            value="beginner" <%if(technology[i].technology_level=='beginner' ){%>
+                        checked
+                        <%}%>>
+                        <label class="me-2" for="<%= technology[i].technology_name %>a">Benginner</label>
 
-                    <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>w"
-                        value="yes" <%if(technology[i].technology_level=='expert'){%>
+                        <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>a"
+                            value="mideator" <%if(technology[i].technology_level=='mideator' ){%>
                             checked
-                            <%}%>>
-                    <label class="me-2" for="<%= technology[i].technology_name %>w">Expert</label>
+                        <%}%>>
+                        <label class="me-2" for="<%= technology[i].technology_name %>a">Mediator</label>
 
-                </div>
-                <%}%>
-                    <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+                        <input class="form-check-input" type="radio"
+                            name="<%= technology[i].technology_name %>a" value="expert"
+                            <%if(technology[i].technology_level=='expert' ){%>
+                                checked
+                        <%}%>>
+                        <label class="me-2" for="<%= technology[i].technology_name %>a">Expert</label>
+
+                    </div>
+                    <%}%>
+                        <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+            </form>
         </div>
     </div>
 
@@ -512,20 +518,20 @@
 
 <script>
 
-    const newTechProficiencies = [];
+    // const newTechProficiencies = [];
 
-    
 
-    for (const techOption of technologyOptions) {
-        const matchingProficiency = techProficiencies.find(
-            proficiency => proficiency.technology === techOption.value
-        );
-        if (!matchingProficiency) {
-            newTechProficiencies.push({
-                language: techOption.value,
-            });
-        }
-    }
+
+    // for (const techOption of technologyOptions) {
+    //     const matchingProficiency = techProficiencies.find(
+    //         proficiency => proficiency.technology === techOption.value
+    //     );
+    //     if (!matchingProficiency) {
+    //         newTechProficiencies.push({
+    //             language: techOption.value,
+    //         });
+    //     }
+    // }
 
     const basicSaveBtn = document.getElementById('basic-save-btn');
     const basicEditBtn = document.getElementById('basic-edit-btn');

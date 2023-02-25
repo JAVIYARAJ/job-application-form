@@ -334,50 +334,36 @@ app.post('/search', (req, res) => {
 app.get('/edit', async (req, res) => {
 
   let candidate_data = await queryExecutor(`select * from design.candidate_info where candidate_id=${req.query.id}`);
-
+  
+  
   let acadamic_data = await queryExecutor(`select * from design.acadamic_info where candidate_id=${req.query.id}`);
-
+  
+  
   let experience_data = await queryExecutor(`select * from design.experience_info where candidate_id=${req.query.id}`);
-
+  
+  
   let language_data = await queryExecutor(`select * from design.language_info where candidate_id=${req.query.id}`);
+  console.log('edit data');
+  console.log(language_data);
   
   let reference_data = await queryExecutor(`select * from design.reference_info where candidate_id=${req.query.id}`);
   
   let technology_data = await queryExecutor(`select * from design.technology_info where candidate_id=${req.query.id}`);
-  console.log(technology_data)
   
   let state_res = await queryExecutor('SELECT * FROM practice.state_master;');
-
+  
+  
   let department_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=4;');
-
+  
+  
   let prefered_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=3;');
-
+  
+  
   let courses = await queryExecutor('SELECT * FROM practice.education_courses_master;');
 
 
-  let languages = await queryExecutor('SELECT * FROM practice.option_master where option_id=5;');
-
-
   const newLanguages = [];
-  const newTechnology=[];
-
-  
-  // console.log(language_data);
-  // console.log(languages)
-  // let candidate_lang = [];
-  // let all_languages = [];
-
-  // for (let i = 0; i < language_data.length; i++) {
-  //   candidate_lang.push(language_data[i].language_name);
-  // }
-
-  // for (let j = 0; j < languages.length; j++) {
-  //   all_languages.push(languages[j].option_value);
-  // }
-
-  // const remaning_lang=[];
-  // const diff=languages.length-language_data.length;
-  
+  const newTechnology = [];
 
   const state = candidate_data[0].state;
   var state_id;
@@ -404,7 +390,7 @@ app.get('/edit', async (req, res) => {
 
   let city_res = await queryExecutor(`SELECT * FROM practice.city_master where state_id=${state_id}`);
 
-  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res, courses: courses, language_list: languages });
+  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res, courses: courses});
 });
 
 //use for dynamic drop down
@@ -577,45 +563,66 @@ app.post('/update-data/ref', async (req, res) => {
 
 })
 
-app.post('/update-data/language',(req,res)=>{
-  console.log(req.body)
-  const id=req.body.lang_id;
-  const lang_id=req.body.lang_id;
+app.post('/update-data/language', (req, res) => {
+  const id = req.body.id;
+  console.log(req.body);
+  const lang_id = req.body.lang_id;
+
   con.query(`SELECT * FROM design.language_info where candidate_id=${req.body.id};`, (err, result) => {
     var query_lan;
-    console.log(result);
-    for (let i = 0; i < result.length; i++) {
 
-      var language_name = result[i].language_name;
+    for (let i = 0; i < result.length; i++) {
+      var language_name = req.body[result[i].language_name];
       var read = req.body[result[i].language_name + "r"];
       var write = req.body[result[i].language_name + "w"];
       var speak = req.body[result[i].language_name + "s"];
       if (typeof (read) == "undefined") read = "No";
       if (typeof (write) == "undefined") write = "No";
       if (typeof (speak) == "undefined") speak = "No";
+      console.log(language_name, read, speak, write);
 
       if (typeof (language_name) == "string") {
-      query_lan = `update design.language_info set language_info.language_name='',
+        query_lan = `update design.language_info set language_info.language_name='${language_name}',
       language_info.language_read='${read}',
       language_info.language_speak='${speak}',
       language_info.language_write='${write}' where language_info.language_id=${lang_id[i]}`;
-      console.log(query_lan);
-      
-        
-      con.query(query_lan, (err, result4) => {
-        if (err) return console.log(err.message);
-        else {
-          res.redirect(`/edit/?id=${id}`)
-        }
+        console.log(query_lan);
 
-      })
+        con.query(query_lan, (err, result4) => {
+          if (err) return console.log(err.message);
+        })
 
 
       }
-     
+
     }
+    res.redirect(`/edit/?id=${id}`)
   })
 })
+
+app.post('/update-data/technology',(req,res)=>{
+  const techId=req.body.tech_id;
+  const id = req.body.id;
+
+  con.query(`select * from design.technology_info where candidate_id=${parseInt(req.body.id)}`, (err, result) => {
+    console.log(result);
+    for (let i = 0; i < result.length; i++) {
+      var tech = req.body[result[i].technology_name]
+      var level = req.body[result[i].technology_name + 'a'];
+
+      if (typeof (tech) == "string") {
+        var query_tech = `update design.technology_info set technology_info.technology_name='${tech}',
+        technology_info.technology_level='${level}' where technology_info.tech_id=${techId[i]}`;
+        console.log(query_tech);
+
+        con.query(query_tech, (err, result) => {
+          if (err) console.log(err.message);
+        })
+      }
+    }
+    res.redirect(`/edit/?id=${id}`)
+  })
+});
 
 async function getData() {
   let result = await fetch('http://127.0.0.1:3000/test');
