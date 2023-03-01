@@ -69,6 +69,12 @@
         display: flex;
         justify-content: start;
     }
+
+    #newTech {
+        height: 40px;
+        border-radius: 10px;
+        width: 100px;
+    }
 </style>
 
 <body>
@@ -298,7 +304,7 @@
                             <div class="mb-3">
                                 <input type="hidden" name="edu_id" value="<%= acadamic[i].acadamic_id %>">
                                 <label for="Course" class="form-label">Course Name</label>
-                                <select  name="Course" class="mt-4 edu-dropdown">
+                                <select name="Course" class="mt-4 edu-dropdown">
 
                                     <% for(let j=0;j< courses.length;j++) {%>
                                         <option class="dropdown-item" value="<%= courses[j].course_name %>"
@@ -320,7 +326,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="Passing_Year" class="form-label">Passing Year</label>
-                                <input type="text" name="Passing_Year" class="form-control edu-input" 
+                                <input type="text" name="Passing_Year" class="form-control edu-input"
                                     value="<%= acadamic[i].education_year%>">
                             </div>
                             <div class="mb-3">
@@ -337,7 +343,8 @@
 
                 <div>
                     <input type="submit" id="edu-save-btn" class="btn btn-primary mt-5" value="Save">
-                    <input type="button" id="edu-edit-btn" class="btn btn-primary mt-5" value="Edit" onclick="eduEditData()">
+                    <input type="button" id="edu-edit-btn" class="btn btn-primary mt-5" value="Edit"
+                        onclick="eduEditData()">
                 </div>
             </form>
         </div>
@@ -388,9 +395,9 @@
                         </div>
                     </div>
                     <%}%>
-                        <input type="submit" id="exe-save-btn"  class="btn btn-primary mt-5" value="Save">
+                        <input type="submit" id="exe-save-btn" class="btn btn-primary mt-5" value="Save">
                         <input type="button" id="exe-edit-btn" class="btn btn-primary m-2" value="Edit"
-                        onclick="editExeData()">
+                            onclick="editExeData()">
             </form>
         </div>
         <form action="/insertExe" method="post">
@@ -438,9 +445,16 @@
                     <%}%>
                         <input type="submit" id="ref-save-btn" class="btn btn-primary mt-5" value="Save">
                         <input type="button" id="ref-edit-btn" class="btn btn-primary m-2" value="Edit"
-                        onclick="editRefData()">
+                            onclick="editRefData()">
             </form>
         </div>
+        <form action="/insertRef" method="post">
+            <input type="hidden" value="<%= data[0].candidate_id %>" name="id">
+            <div class="container mt-3 pb-3" id="newRef">
+
+                <input type="submit" class="btn btn-primary" value="Save Courses" id="addRefSubmitBtn">
+            </div>
+        </form>
     </div>
 
     <div id="lang_main" class="lang_main disable-content content">
@@ -454,15 +468,16 @@
                     <%for(let i=0;i<laanguage.length;i++){%>
                         <div class="m-3">
                             <input type="hidden" value="<%= laanguage[i].language_id %>" name="lang_id">
-                            <input class="form-check-input lang-input" type="checkbox" name="<%=laanguage[i].language_name%>"
-                                value="<%=laanguage[i].language_name%>" checked>
+                            <input class="form-check-input lang-input" type="checkbox"
+                                name="<%=laanguage[i].language_name%>" value="<%=laanguage[i].language_name%>" checked>
 
                             <label class="me-3" for="<%= laanguage[i].language_name %>">
                                 <%= laanguage[i].language_name %>
                             </label>
 
-                            <input class="form-check-input lang-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
-                                value="yes" <%if(laanguage[i].language_read=='yes' ){%>
+                            <input class="form-check-input lang-input" type="checkbox"
+                                name="<%= laanguage[i].language_name %>r" value="yes"
+                                <%if(laanguage[i].language_read=='yes' ){%>
                             checked
                             <%}%>>
                                 <label class="me-2" for="<%= laanguage[i].language_name %>r">Read</label>
@@ -485,36 +500,75 @@
                         <%}%>
             </div>
             <input type="submit" id="lang-save-btn" class="btn btn-primary mt-5" value="Save">
-            <input type="button" id="lang-edit-btn" class="btn btn-primary m-2" value="Edit"
-                        onclick="editLangData()">
+            <input type="button" id="lang-edit-btn" class="btn btn-primary m-2" value="Edit" onclick="editLangData()">
             </form>
         </div>
 
     </div>
 
+    <div class="container box mt-3 disable-content content" id="lang_second">
+
+        <% if(remanningLang.length==0){ %>
+            <p>
+                Langauge Not Found
+            </p>
+        <%}%>
+
+        <form action="/insertLang" method="post">
+            <input type="hidden" value="<%=data[0].candidate_id%>" name="id">
+            <%for(let i=0;i<remanningLang.length;i++){%>
+                <div class="m-3">
+                    <input class="form-check-input lang-input-rem" type="checkbox" name="<%=remanningLang[i]%>"
+                        value="<%=remanningLang[i]%>">
+
+                    <label class="me-3" for="<%= remanningLang[i] %>">
+                        <%= remanningLang[i] %>
+                    </label>
+
+                    <input class="form-check-input lang-input-rem" type="checkbox" name="<%= remanningLang[i] %>r"
+                        value="yes">
+                    <label class="me-2" for="<%= remanningLang[i] %>r">Read</label>
+
+                    <input class="form-check-input lang-input-rem" type="checkbox" name="<%= remanningLang[i] %>s"
+                        value="yes">
+                    <label class="me-2" for="<%= remanningLang[i] %>s">Speak</label>
+
+                    <input class="form-check-input lang-input-rem" type="checkbox" name="<%= remanningLang[i] %>w"
+                        value="yes">
+                    <label class="me-2" for="<%= remanningLang[i] %>w">Write</label>
+                </div>
+                <%}%>
+                    <input type="submit" value="Add New Language" class="btn btn-primary mb-3">
+    </div>
+    </form>
+    </div>
+
     <div id="tech_main" class="tech_main disable-content content">
 
-        <div class="container box mt-3 pb-3">
+        <div class="container box mt-3 pb-3" id="tech_first">
             <p class="m-3">Technology</p>
             <form action="/update-data/technology" method="post">
                 <input type="hidden" value="<%=data[0].candidate_id%>" name="id">
                 <% for(let i=0;i<technology.length;i++){%>
                     <div class="m-3">
                         <input type="hidden" value="<%= technology[i].tech_id %>" name="tech_id">
-                        <input class="form-check-input tech-input" type="checkbox" name="<%= technology[i].technology_name %>"
-                            value="<%= technology[i].technology_name %>" checked>
+                        <input class="form-check-input tech-input" type="checkbox"
+                            name="<%= technology[i].technology_name %>" value="<%= technology[i].technology_name %>"
+                            checked>
                         <label class="me-3" for="<%= technology[i].technology_name %>a">
                             <%= technology[i].technology_name %>
                         </label>
 
-                        <input class="form-check-input tech-input" type="radio" name="<%= technology[i].technology_name %>a"
-                            value="beginner" <%if(technology[i].technology_level=='beginner' ){%>
+                        <input class="form-check-input tech-input" type="radio"
+                            name="<%= technology[i].technology_name %>a" value="beginner"
+                            <%if(technology[i].technology_level=='beginner' ){%>
                         checked
                         <%}%>>
                             <label class="me-2" for="<%= technology[i].technology_name %>a">Benginner</label>
 
-                            <input class="form-check-input tech-input" type="radio" name="<%= technology[i].technology_name %>a"
-                                value="mideator" <%if(technology[i].technology_level=='mideator' ){%>
+                            <input class="form-check-input tech-input" type="radio"
+                                name="<%= technology[i].technology_name %>a" value="mideator"
+                                <%if(technology[i].technology_level=='mideator' ){%>
                             checked
                             <%}%>>
                                 <label class="me-2" for="<%= technology[i].technology_name %>a">Mediator</label>
@@ -530,9 +584,45 @@
                     <%}%>
                         <input type="submit" id="tech-save-btn" class="btn btn-primary mt-5" value="Save">
                         <input type="button" id="tech-edit-btn" class="btn btn-primary m-2" value="Edit"
-                        onclick="editTechData()">
+                            onclick="editTechData()">
             </form>
         </div>
+    </div>
+
+    <div class="container box mt-3 disable-content content" id="tech_second">
+        <% if(remanningTech.length==0){ %>
+            <p>
+                Technology Not Found
+            </p>
+        <%}%>
+        <form action="/insertTech" method="post">
+            <input type="hidden" value="<%=data[0].candidate_id%>" name="id">
+            <% for(let i=0;i<remanningTech.length;i++){%>
+                <div class="m-3">
+
+                    <input class="form-check-input tech-input-rem" type="checkbox" name="<%= remanningTech[i] %>"
+                        value="<%= remanningTech[i] %>">
+                    <label class="me-3" for="<%= remanningTech[i] %>">
+                        <%= remanningTech[i] %>
+                    </label>
+
+                    <input class="form-check-input tech-input-rem" type="radio" name="<%= remanningTech[i] %>a"
+                        value="beginner">
+                    <label class="me-2" for="<%= remanningTech[i] %>a">Benginner</label>
+
+                    <input class="form-check-input tech-input-rem" type="radio" name="<%= remanningTech[i] %>a"
+                        value="mideator">
+                    <label class="me-2" for="<%= remanningTech[i] %>a">Mediator</label>
+
+                    <input class="form-check-input tech-input-rem" type="radio" name="<%= remanningTech[i] %>a"
+                        value="expert">
+                    <label class="me-2" for="<%= remanningTech[i] %>a">Expert</label>
+
+                </div>
+                <%}%>
+                    <input type="submit" class="btn btn-primary m-2" value="Add New Technology">
+
+        </form>
     </div>
 
 </body>
@@ -545,6 +635,9 @@
 
     const addExeBtn = document.getElementById('addExeSubmitBtn');
     addExeBtn.style.display = 'none';
+
+    const addRefBtn = document.getElementById('addRefSubmitBtn');
+    addRefBtn.style.display = 'none';
 
     const basicSaveBtn = document.getElementById('basic-save-btn');
     const basicEditBtn = document.getElementById('basic-edit-btn');
@@ -624,13 +717,23 @@
         }
         if (tabId == 'tab5') {
             const tab2 = document.getElementById('lang_main');
+            const temp = document.getElementById('lang_second');
+
             tab2.classList.remove('disable-content');
             tab2.classList.add('active-content')
+
+            temp.classList.remove('disable-content');
+            temp.classList.add('active-content')
         }
         if (tabId == 'tab6') {
             const tab2 = document.getElementById('tech_main');
+            const temp = document.getElementById('tech_second');
+
             tab2.classList.remove('disable-content');
             tab2.classList.add('active-content')
+
+            temp.classList.remove('disable-content');
+            temp.classList.add('active-content')
         }
 
     }
@@ -680,12 +783,11 @@
         }
     }
 
-    
     //save and edit data
     function editData() {
         const allDropDown = document.querySelectorAll('.basic-dropdown');
         const allInput = document.querySelectorAll('.basic-input');
-        toogleModeForInput(basicSaveBtn,basicEditBtn,allInput,allDropDown);
+        toogleModeForInput(basicSaveBtn, basicEditBtn, allInput, allDropDown);
     }
 
     function eduEditData() {
@@ -693,34 +795,34 @@
 
         const allInput = document.querySelectorAll('.edu-input');
 
-        toogleModeForInput(eduSaveBtn,eduEditBtn,allInput,allDropDown);
+        toogleModeForInput(eduSaveBtn, eduEditBtn, allInput, allDropDown);
 
     }
 
-    function editExeData(){
+    function editExeData() {
         const allDropDown = document.querySelectorAll('.exe-dropdown');
         const allInput = document.querySelectorAll('.exe-input');
-        toogleModeForInput(exeSaveBtn,exeEditBtn,allInput,allDropDown);
+        toogleModeForInput(exeSaveBtn, exeEditBtn, allInput, allDropDown);
     }
 
-    function editRefData(){
+    function editRefData() {
         const allDropDown = document.querySelectorAll('.ref-dropdown');
         const allInput = document.querySelectorAll('.ref-input');
-        toogleModeForInput(refSaveBtn,refEditBtn,allInput,allDropDown);
+        toogleModeForInput(refSaveBtn, refEditBtn, allInput, allDropDown);
     }
-    
-    function editLangData(){
+
+    function editLangData() {
         const allDropDown = document.querySelectorAll('.lang-dropdown');
         const allInput = document.querySelectorAll('.lang-input');
-        toogleModeForInput(langSaveBtn,langEditBtn,allDropDown,allInput);
+        toogleModeForInput(langSaveBtn, langEditBtn, allDropDown, allInput);
     }
-    
-    function editTechData(){
+
+    function editTechData() {
         const allDropDown = document.querySelectorAll('.tech-dropdown');
         const allInput = document.querySelectorAll('.tech-input');
-        toogleModeForInput(techSaveBtn,techEditBtn,allDropDown,allInput);
+        toogleModeForInput(techSaveBtn, techEditBtn, allDropDown, allInput);
     }
-    
+
     function addEducation() {
         addEduBtn.style.display = 'block';
 
@@ -802,9 +904,11 @@
     }
 
     function addRefrence() {
-        const container = document.getElementById('ref-content');
+        addRefBtn.style.display = 'block';
+        const container = document.getElementById('newRef');
         const div = document.createElement('div');
         let content = `
+        <div class="box p-3 m-3">
         <div class="flex-box">
                         <div class="mb-3">
                             <label for="ref_name" class="form-label">Person Name</label>
@@ -821,7 +925,7 @@
                         <div class="remove-btn mt-3">
                             <p class="pt-1">Delete</p>
                         </div>
-                    </div>`;
+                    </div></div>`;
         div.innerHTML = content;
         container.appendChild(div)
     }
@@ -848,14 +952,14 @@
         });
     }
 
-    function toogleModeForInput(save,edit,allInput,allDropDown){
+    function toogleModeForInput(save, edit, allInput, allDropDown) {
         save.style.display = 'block';
         edit.style.display = 'none';
         allInput.forEach((input) => {
             input.readOnly = false;
         });
 
-        if(allDropDown.length>=1){
+        if (allDropDown.length >= 1) {
             allDropDown.forEach((dropdown) => {
                 dropdown.disabled = false;
             });
@@ -869,7 +973,7 @@
         });
     }
 
-    
+
 </script>
 
 </html>
