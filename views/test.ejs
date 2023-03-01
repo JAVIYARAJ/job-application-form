@@ -298,7 +298,7 @@
                             <div class="mb-3">
                                 <input type="hidden" name="edu_id" value="<%= acadamic[i].acadamic_id %>">
                                 <label for="Course" class="form-label">Course Name</label>
-                                <select name="Course" class="mt-4">
+                                <select  name="Course" class="mt-4 edu-dropdown">
 
                                     <% for(let j=0;j< courses.length;j++) {%>
                                         <option class="dropdown-item" value="<%= courses[j].course_name %>"
@@ -315,17 +315,17 @@
                             </div>
                             <div class="mb-3">
                                 <label for="institution" class="form-label">Name of Board</label>
-                                <input type="text" name="institution" class="form-control"
+                                <input type="text" name="institution" class="form-control edu-input"
                                     value="<%= acadamic[i].education_board%>">
                             </div>
                             <div class="mb-3">
                                 <label for="Passing_Year" class="form-label">Passing Year</label>
-                                <input type="text" name="Passing_Year" class="form-control"
+                                <input type="text" name="Passing_Year" class="form-control edu-input" 
                                     value="<%= acadamic[i].education_year%>">
                             </div>
                             <div class="mb-3">
                                 <label for="Percentage" class="form-label">Percentage</label>
-                                <input type="text" name="Percentage" class="form-control"
+                                <input type="text" name="Percentage" class="form-control edu-input"
                                     value="<%= acadamic[i].education_grade%>">
                             </div>
                             <div class="remove-btn mt-3">
@@ -336,11 +336,18 @@
                 </div>
 
                 <div>
-                    <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+                    <input type="submit" id="edu-save-btn" class="btn btn-primary mt-5" value="Save">
+                    <input type="button" id="edu-edit-btn" class="btn btn-primary mt-5" value="Edit" onclick="eduEditData()">
                 </div>
             </form>
         </div>
+        <form action="/insertEdu" method="post">
+            <input type="hidden" value="<%= data[0].candidate_id %>" name="id">
+            <div class="container mt-3 pb-3" id="newEdu">
 
+                <input type="submit" class="btn btn-primary" value="Save Courses" id="addEduSubmitBtn">
+            </div>
+        </form>
     </div>
 
     <div id="exe_main" class="exe_main disable-content content">
@@ -357,22 +364,22 @@
                             <div class="mb-3">
                                 <input type="hidden" name="exe_id" value="<%= experience[i].exprience_id %>">
                                 <label for="exe_company_name" class="form-label">Company Name</label>
-                                <input type="text" name="exe_company_name" class="form-control"
+                                <input type="text" name="exe_company_name" class="form-control exe-input"
                                     value="<%= experience[i].company_name%>">
                             </div>
                             <div class="mb-3">
                                 <label for="exe_designation" class="form-label">Designation</label>
-                                <input type="text" name="exe_designation" class="form-control"
+                                <input type="text" name="exe_designation" class="form-control exe-input"
                                     value="<%= experience[i].candidate_position%>">
                             </div>
                             <div class="mb-3">
                                 <label for="exe_from" class="form-label">Joinning Date</label>
-                                <input type="date" name="exe_from" class="form-control"
+                                <input type="date" name="exe_from" class="form-control exe-input"
                                     value="<%= experience[i].candidate_joining%>">
                             </div>
                             <div class="mb-3">
                                 <label for="exe_to" class="form-label">Leaving Date</label>
-                                <input type="date" name="exe_to" class="form-control"
+                                <input type="date" name="exe_to" class="form-control exe-input"
                                     value="<%= experience[i].candidate_leaving%>">
                             </div>
                             <div class="remove-btn mt-3">
@@ -381,9 +388,18 @@
                         </div>
                     </div>
                     <%}%>
-                        <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+                        <input type="submit" id="exe-save-btn"  class="btn btn-primary mt-5" value="Save">
+                        <input type="button" id="exe-edit-btn" class="btn btn-primary m-2" value="Edit"
+                        onclick="editExeData()">
             </form>
         </div>
+        <form action="/insertExe" method="post">
+            <input type="hidden" value="<%= data[0].candidate_id %>" name="id">
+            <div class="container mt-3 pb-3" id="newExe">
+
+                <input type="submit" class="btn btn-primary" value="Save Courses" id="addExeSubmitBtn">
+            </div>
+        </form>
 
     </div>
 
@@ -401,17 +417,17 @@
                             <div class="mb-3">
                                 <input type="hidden" name="ref_id" value="<%= reference[i].reference_id %>">
                                 <label for="ref_name" class="form-label">Person Name</label>
-                                <input type="text" name="ref_name" class="form-control"
+                                <input type="text" name="ref_name" class="form-control ref-input"
                                     value="<%= reference[i].person_name%>">
                             </div>
                             <div class="mb-3">
                                 <label for="ref_number" class="form-label">Person Number</label>
-                                <input type="text" name="ref_number" class="form-control"
+                                <input type="text" name="ref_number" class="form-control ref-input"
                                     value="<%= reference[i].person_contact%>">
                             </div>
                             <div class="mb-3">
                                 <label for="ref_relation" class="form-label">Relation</label>
-                                <input type="text" name="ref_relation" class="form-control"
+                                <input type="text" name="ref_relation" class="form-control ref-input"
                                     value="<%= reference[i].person_relation%>">
                             </div>
                             <div class="remove-btn mt-3">
@@ -420,7 +436,9 @@
                         </div>
                     </div>
                     <%}%>
-                        <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+                        <input type="submit" id="ref-save-btn" class="btn btn-primary mt-5" value="Save">
+                        <input type="button" id="ref-edit-btn" class="btn btn-primary m-2" value="Edit"
+                        onclick="editRefData()">
             </form>
         </div>
     </div>
@@ -436,27 +454,27 @@
                     <%for(let i=0;i<laanguage.length;i++){%>
                         <div class="m-3">
                             <input type="hidden" value="<%= laanguage[i].language_id %>" name="lang_id">
-                            <input class="form-check-input" type="checkbox" name="<%=laanguage[i].language_name%>"
+                            <input class="form-check-input lang-input" type="checkbox" name="<%=laanguage[i].language_name%>"
                                 value="<%=laanguage[i].language_name%>" checked>
 
                             <label class="me-3" for="<%= laanguage[i].language_name %>">
                                 <%= laanguage[i].language_name %>
                             </label>
 
-                            <input class="form-check-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
+                            <input class="form-check-input lang-input" type="checkbox" name="<%= laanguage[i].language_name %>r"
                                 value="yes" <%if(laanguage[i].language_read=='yes' ){%>
                             checked
                             <%}%>>
                                 <label class="me-2" for="<%= laanguage[i].language_name %>r">Read</label>
 
-                                <input class="form-check-input" type="checkbox"
+                                <input class="form-check-input lang-input" type="checkbox"
                                     name="<%= laanguage[i].language_name %>s" value="yes"
                                     <%if(laanguage[i].language_speak=='yes' ){%>
                                 checked
                                 <%}%>>
                                     <label class="me-2" for="<%= laanguage[i].language_name %>s">Speak</label>
 
-                                    <input class="form-check-input" type="checkbox"
+                                    <input class="form-check-input lang-input" type="checkbox"
                                         name="<%= laanguage[i].language_name %>w" value="yes"
                                         <%if(laanguage[i].language_write=='yes' ){%>
                                     checked
@@ -466,7 +484,9 @@
                         </div>
                         <%}%>
             </div>
-            <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+            <input type="submit" id="lang-save-btn" class="btn btn-primary mt-5" value="Save">
+            <input type="button" id="lang-edit-btn" class="btn btn-primary m-2" value="Edit"
+                        onclick="editLangData()">
             </form>
         </div>
 
@@ -481,34 +501,36 @@
                 <% for(let i=0;i<technology.length;i++){%>
                     <div class="m-3">
                         <input type="hidden" value="<%= technology[i].tech_id %>" name="tech_id">
-                        <input class="form-check-input" type="checkbox" name="<%= technology[i].technology_name %>"
+                        <input class="form-check-input tech-input" type="checkbox" name="<%= technology[i].technology_name %>"
                             value="<%= technology[i].technology_name %>" checked>
                         <label class="me-3" for="<%= technology[i].technology_name %>a">
                             <%= technology[i].technology_name %>
                         </label>
 
-                        <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>a"
+                        <input class="form-check-input tech-input" type="radio" name="<%= technology[i].technology_name %>a"
                             value="beginner" <%if(technology[i].technology_level=='beginner' ){%>
                         checked
                         <%}%>>
-                        <label class="me-2" for="<%= technology[i].technology_name %>a">Benginner</label>
+                            <label class="me-2" for="<%= technology[i].technology_name %>a">Benginner</label>
 
-                        <input class="form-check-input" type="radio" name="<%= technology[i].technology_name %>a"
-                            value="mideator" <%if(technology[i].technology_level=='mideator' ){%>
+                            <input class="form-check-input tech-input" type="radio" name="<%= technology[i].technology_name %>a"
+                                value="mideator" <%if(technology[i].technology_level=='mideator' ){%>
                             checked
-                        <%}%>>
-                        <label class="me-2" for="<%= technology[i].technology_name %>a">Mediator</label>
+                            <%}%>>
+                                <label class="me-2" for="<%= technology[i].technology_name %>a">Mediator</label>
 
-                        <input class="form-check-input" type="radio"
-                            name="<%= technology[i].technology_name %>a" value="expert"
-                            <%if(technology[i].technology_level=='expert' ){%>
+                                <input class="form-check-input tech-input" type="radio"
+                                    name="<%= technology[i].technology_name %>a" value="expert"
+                                    <%if(technology[i].technology_level=='expert' ){%>
                                 checked
-                        <%}%>>
-                        <label class="me-2" for="<%= technology[i].technology_name %>a">Expert</label>
+                                <%}%>>
+                                    <label class="me-2" for="<%= technology[i].technology_name %>a">Expert</label>
 
                     </div>
                     <%}%>
-                        <input type="submit" class="btn btn-primary mt-5" name="" id="" value="Save">
+                        <input type="submit" id="tech-save-btn" class="btn btn-primary mt-5" value="Save">
+                        <input type="button" id="tech-edit-btn" class="btn btn-primary m-2" value="Edit"
+                        onclick="editTechData()">
             </form>
         </div>
     </div>
@@ -518,34 +540,46 @@
 
 <script>
 
-    // const newTechProficiencies = [];
+    const addEduBtn = document.getElementById('addEduSubmitBtn');
+    addEduBtn.style.display = 'none';
 
-
-
-    // for (const techOption of technologyOptions) {
-    //     const matchingProficiency = techProficiencies.find(
-    //         proficiency => proficiency.technology === techOption.value
-    //     );
-    //     if (!matchingProficiency) {
-    //         newTechProficiencies.push({
-    //             language: techOption.value,
-    //         });
-    //     }
-    // }
+    const addExeBtn = document.getElementById('addExeSubmitBtn');
+    addExeBtn.style.display = 'none';
 
     const basicSaveBtn = document.getElementById('basic-save-btn');
     const basicEditBtn = document.getElementById('basic-edit-btn');
     basicSaveBtn.style.display = 'none'
 
-    const allInput = document.querySelectorAll('.basic-input');
-    allInput.forEach((input) => {
-        input.readOnly = true;
-    });
-    const allDropDown = document.querySelectorAll('.basic-dropdown');
-    allDropDown.forEach((dropdown) => {
-        dropdown.disabled = true;
-    });
+    const eduSaveBtn = document.getElementById('edu-save-btn');
+    const eduEditBtn = document.getElementById('edu-edit-btn');
+    eduSaveBtn.style.display = 'none'
 
+    const exeSaveBtn = document.getElementById('exe-save-btn');
+    const exeEditBtn = document.getElementById('exe-edit-btn');
+    exeSaveBtn.style.display = 'none'
+
+    const refSaveBtn = document.getElementById('ref-save-btn');
+    const refEditBtn = document.getElementById('ref-edit-btn');
+    refSaveBtn.style.display = 'none'
+
+    const langSaveBtn = document.getElementById('lang-save-btn');
+    const langEditBtn = document.getElementById('lang-edit-btn');
+    langSaveBtn.style.display = 'none'
+
+    const techSaveBtn = document.getElementById('tech-save-btn');
+    const techEditBtn = document.getElementById('tech-edit-btn');
+    techSaveBtn.style.display = 'none'
+
+    readOnlyInputs('.basic-input');
+    readOnlyInputs('.edu-input');
+    readOnlyInputs('.exe-input');
+    readOnlyInputs('.ref-input');
+    // readOnlyInputs('.lang-input');
+
+    dropDownReadOnlyInputs('.basic-dropdown');
+    dropDownReadOnlyInputs('.edu-dropdown');
+    dropDownReadOnlyInputs('.lang-input');
+    dropDownReadOnlyInputs('.tech-input');
 
     async function toogle(value) {
 
@@ -646,67 +680,102 @@
         }
     }
 
+    
     //save and edit data
     function editData() {
-        basicSaveBtn.style.display = 'block';
-        basicEditBtn.style.display = 'none';
-        allInput.forEach((input) => {
-            input.readOnly = false;
-        });
-        allDropDown.forEach((dropdown) => {
-            dropdown.disabled = false;
-        });
+        const allDropDown = document.querySelectorAll('.basic-dropdown');
+        const allInput = document.querySelectorAll('.basic-input');
+        toogleModeForInput(basicSaveBtn,basicEditBtn,allInput,allDropDown);
     }
 
+    function eduEditData() {
+        const allDropDown = document.querySelectorAll('.edu-dropdown');
 
+        const allInput = document.querySelectorAll('.edu-input');
+
+        toogleModeForInput(eduSaveBtn,eduEditBtn,allInput,allDropDown);
+
+    }
+
+    function editExeData(){
+        const allDropDown = document.querySelectorAll('.exe-dropdown');
+        const allInput = document.querySelectorAll('.exe-input');
+        toogleModeForInput(exeSaveBtn,exeEditBtn,allInput,allDropDown);
+    }
+
+    function editRefData(){
+        const allDropDown = document.querySelectorAll('.ref-dropdown');
+        const allInput = document.querySelectorAll('.ref-input');
+        toogleModeForInput(refSaveBtn,refEditBtn,allInput,allDropDown);
+    }
+    
+    function editLangData(){
+        const allDropDown = document.querySelectorAll('.lang-dropdown');
+        const allInput = document.querySelectorAll('.lang-input');
+        toogleModeForInput(langSaveBtn,langEditBtn,allDropDown,allInput);
+    }
+    
+    function editTechData(){
+        const allDropDown = document.querySelectorAll('.tech-dropdown');
+        const allInput = document.querySelectorAll('.tech-input');
+        toogleModeForInput(techSaveBtn,techEditBtn,allDropDown,allInput);
+    }
+    
     function addEducation() {
-        const container = document.getElementById('edu-content');
+        addEduBtn.style.display = 'block';
+
+        const container = document.getElementById('newEdu');
         const div = document.createElement('div');
         let content = `
-       
+        <div class="box p-3 m-3">
             <div class="flex-box">
                 <div class="mb-3">
                     <label for="Course" class="form-label">Course Name</label>
-                        <select name="Course" class="mt-4">
+                        <select name="Course" class="mt-4 course">
 
                             <% for(let j=0;j< courses.length;j++) {%>
                                 <option class="dropdown-item" value="<%= courses[j].course_name %>">
                                     <%= courses[j].course_name %>
                                 </option>
-                                <%}%>
+                            <%}%>
 
                         </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="institution" class="form-label">Name of Board</label>
-                    <input type="text" name="institution" class="form-control">
+                    <input type="text" name="institution" class="form-control institution">
                 </div>
 
                 <div class="mb-3">
                     <label for="Passing_Year" class="form-label">Passing Year</label>
-                    <input type="text" name="Passing_Year" class="form-control">
+                    <input type="text" name="Passing_Year" class="form-control passing_year">
                 </div>
 
                 <div class="mb-3">
                     <label for="Percentage" class="form-label">Percentage</label>
-                    <input type="text" name="Percentage" class="form-control">
+                    <input type="text" name="Percentage" class="form-control percentage">
                 </div>
                 
                 <div class="remove-btn mt-3">
                     <p class="pt-1">Delete</p>
                 </div>
-            
-
-    </div>`;
+    </div>
+    
+    </div>
+    `;
         div.innerHTML = content;
         container.appendChild(div)
     }
 
     function addExperience() {
-        const container = document.getElementById('exe-content');
+        addExeBtn.style.display = 'block';
+
+        const container = document.getElementById('newExe');
         const div = document.createElement('div');
+
         let content = `
+        <div class="box p-3 m-3">
         <div class="flex-box">
                         <div class="mb-3">
                             <label for="exe_company_name" class="form-label">Company Name</label>
@@ -727,10 +796,11 @@
                         <div class="remove-btn mt-3">
                             <p class="pt-1">Delete</p>
                         </div>
-        </div>`;
+        </div></div>`;
         div.innerHTML = content;
         container.appendChild(div)
     }
+
     function addRefrence() {
         const container = document.getElementById('ref-content');
         const div = document.createElement('div');
@@ -755,6 +825,51 @@
         div.innerHTML = content;
         container.appendChild(div)
     }
+
+    function showAlertBox(message) {
+        let content = `
+            <div class="alert alert-primary" role="alert">
+            ${message}
+            </div>`;
+        const alert = document.getElementById('alert-box');
+        alert.innerHTML = content;
+
+        setTimeout(() => {
+            alert.innerHTML = ''
+        }, 2000);
+    }
+
+    function readOnlyInputs(query) {
+        console.log(query)
+        const allInput = document.querySelectorAll(query);
+        console.log(allInput);
+        allInput.forEach((input) => {
+            input.readOnly = true;
+        });
+    }
+
+    function toogleModeForInput(save,edit,allInput,allDropDown){
+        save.style.display = 'block';
+        edit.style.display = 'none';
+        allInput.forEach((input) => {
+            input.readOnly = false;
+        });
+
+        if(allDropDown.length>=1){
+            allDropDown.forEach((dropdown) => {
+                dropdown.disabled = false;
+            });
+        }
+    }
+
+    function dropDownReadOnlyInputs(query) {
+        const allInput = document.querySelectorAll(query);
+        allInput.forEach((input) => {
+            input.disabled = true;
+        });
+    }
+
+    
 </script>
 
 </html>

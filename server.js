@@ -8,6 +8,8 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyparser.urlencoded({ extended: false }));
 
+let port = 4000;
+
 let option_value;
 let state_value;
 let pref_value;
@@ -48,7 +50,7 @@ app.post('/insert', async (req, res) => {
 
 
 
-  let basic_query = `INSERT INTO design.candidate_info (fname, lname, designation, dob, zcode, gender, perf_location, expacted_ctc, email, current_ctc, department, notice_peroid, address, city, createdAt, phone,state) VALUES ('${fname}', '${lname}', '${designation}', '${dob}', '${zcode}', '${gender}', '${pref_location}', '${expacted_ctc}', '${email}', '${current_ctc}', '${department}', '${current_ctc}', '${address1 + " " + address2}', '${city}',CURRENT_TIMESTAMP, '${phone}','${state_value[0].state_name}');`;
+  let basic_query = `INSERT INTO design.candidate_info (fname, lname, designation, dob, zcode, gender, perf_location, expacted_ctc, email, current_ctc, department, notice_peroid, address, city, createdAt, phone,state) VALUES ('${fname}', '${lname}', '${designation}', '${dob}', '${zcode}', '${gender}', '${pref_location}', '${expacted_ctc}', '${email}', '${current_ctc}', '${department}', '${notice_period}', '${address1 + " " + address2}', '${city}',CURRENT_TIMESTAMP, '${phone}','${state_value[0].state_name}');`;
 
   con.query(basic_query, (err, result1) => {
     console.log(result1, 'basic info insert success');
@@ -56,108 +58,14 @@ app.post('/insert', async (req, res) => {
     id = result1.insertId;
 
     //education
-    const { Course, institution, Percentage, Passing_Year } = req.body
-
-    console.log(Course, institution, Percentage, Passing_Year);
-
-
-    if (typeof (Course, institution, Percentage, Passing_Year) == "string") {
-      var edu_query = `INSERT INTO design.acadamic_info (course_name, education_board, education_year, education_grade, candidate_id) values ('${Course}',
-            '${institution}','${Passing_Year}','${Percentage}',${id})`;
-
-      con.query(edu_query, (err, result2) => {
-        if (err) return console.log(err.message);
-        else {
-          console.log(result2, 'acadamic insert success');
-
-        }
-
-      })
-    }
-    else {
-      for (let i = 0; i < Course.length; i++) {
-
-
-        let edu_query = `INSERT INTO design.acadamic_info (course_name, education_board, education_year, education_grade, candidate_id) values ('${Course[i]}',
-            '${institution[i]}','${Passing_Year[i]}','${Percentage[i]}',${id})`;
-
-        console.log(edu_query);
-
-        con.query(edu_query, (err, result2) => {
-          if (err) return console.log(err.message);
-          else {
-            console.log(result2, 'acadamic insert success');
-          }
-
-        })
-
-      }
-    }
+    insertEduData(req.body.Course,req.body.institution,req.body.Percentage,req.body.Passing_Year,id);
 
     //experience
-    const { exe_company_name, exe_designation, exe_from, exe_to } = req.body
-
-    console.log(exe_company_name, exe_designation, exe_from, exe_to);
-
-
-    if (typeof (exe_company_name, exe_designation, exe_from, exe_to) == "string") {
-      let exe_query = `INSERT INTO design.experience_info (company_name, candidate_position, candidate_joining, candidate_leaving, candidate_id) values ('${exe_company_name}','${exe_designation}','${exe_from}','${exe_to}',${id})`;
-      con.query(exe_query, (err, result3) => {
-        if (err) return console.log(err.message);
-        else {
-          console.log(result3, 'exepernce insert success');
-        }
-
-      })
-    }
-    else {
-      for (let i = 0; i < exe_company_name.length; i++) {
-
-        let exe_query = `INSERT INTO design.experience_info (company_name, candidate_position, candidate_joining, candidate_leaving, candidate_id) values ('${exe_company_name[i]}','${exe_designation[i]}','${exe_from[i]}','${exe_to[i]}',${id})`;
-        con.query(exe_query, (err, result3) => {
-          if (err) return console.log(err.message);
-          else {
-            console.log(result3, 'technology insert success');
-          }
-
-        })
-
-      }
-    }
-
+    insertExeData(req.body.exe_company_name,req.body.exe_designation,req.body.exe_from,req.body.exe_to,id)
+    
 
     //refrence
-    const { ref_name, ref_number, ref_relation } = req.body
-
-    console.log(ref_name, ref_number, ref_relation);
-
-
-    if (typeof (ref_name, ref_number, ref_relation) == "string") {
-      var ref_query = `INSERT INTO design.reference_info (person_name, person_contact, person_relation, candidate_id) VALUES ('${ref_name}','${ref_number}','${ref_relation}',${id})`;
-      con.query(ref_query, (err, result4) => {
-        if (err) return console.log(err.message);
-        else {
-          console.log(result4, 'refernces insert success');
-        }
-
-      })
-    }
-    else {
-      for (let i = 0; i < ref_name.length; i++) {
-
-        var ref_query = `INSERT INTO design.reference_info (person_name, person_contact, person_relation, candidate_id) VALUES ('${ref_name[i]}','${ref_number[i]}','${ref_relation[i]}',${id})`;
-
-
-        con.query(ref_query, (err, result4) => {
-          if (err) return console.log(err.message);
-          else {
-            console.log(result4, 'refrence insert success');
-          }
-
-        })
-
-      }
-    }
+    insertRefData(req.body.ref_name,req.body.ref_number,req.body.ref_relation,id);
 
     //language
 
@@ -212,7 +120,6 @@ app.post('/insert', async (req, res) => {
 
   })
 });
-
 
 app.get('/job-info', async (req, res) => {
   let ids = ['candidate_id', 'fname', 'lname', 'designation', 'dob', 'zcode', 'gender', 'perf_location', 'expacted_ctc', 'email', 'current_ctc', 'department', 'notice_peroid', 'address', 'city', 'createdAt', 'phone', 'state'];
@@ -334,31 +241,30 @@ app.post('/search', (req, res) => {
 app.get('/edit', async (req, res) => {
 
   let candidate_data = await queryExecutor(`select * from design.candidate_info where candidate_id=${req.query.id}`);
-  
-  
+
+
   let acadamic_data = await queryExecutor(`select * from design.acadamic_info where candidate_id=${req.query.id}`);
-  
-  
+
+
   let experience_data = await queryExecutor(`select * from design.experience_info where candidate_id=${req.query.id}`);
-  
-  
+
+
   let language_data = await queryExecutor(`select * from design.language_info where candidate_id=${req.query.id}`);
-  console.log('edit data');
-  console.log(language_data);
-  
+
+
   let reference_data = await queryExecutor(`select * from design.reference_info where candidate_id=${req.query.id}`);
-  
+
   let technology_data = await queryExecutor(`select * from design.technology_info where candidate_id=${req.query.id}`);
-  
+
   let state_res = await queryExecutor('SELECT * FROM practice.state_master;');
-  
-  
+
+
   let department_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=4;');
-  
-  
+
+
   let prefered_res = await queryExecutor('SELECT * FROM practice.option_master where option_id=3;');
-  
-  
+
+
   let courses = await queryExecutor('SELECT * FROM practice.education_courses_master;');
 
 
@@ -390,7 +296,7 @@ app.get('/edit', async (req, res) => {
 
   let city_res = await queryExecutor(`SELECT * FROM practice.city_master where state_id=${state_id}`);
 
-  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res, courses: courses});
+  res.render("test", { data: candidate_data, gender_type: ['Male', 'Female', 'Other'], state: state_res, acadamic: acadamic_data, experience: experience_data, reference: reference_data, laanguage: language_data, technology: technology_data, id: req.query.id, city: city_res, pref: prefered_res, department: department_res, courses: courses });
 });
 
 //use for dynamic drop down
@@ -413,6 +319,22 @@ app.get('/delete-multiple', async (req, res) => {
     const result = await queryExecutor(`update design.candidate_info set isDeleted=1 where candidate_info.candidate_id=${parseInt(id)};`);
   }
 })
+
+app.post('/insertEdu', (req, res) => {
+  
+  insertEduData(req.body.Course,req.body.institution,req.body.Percentage,req.body.Passing_Year,req.body.id);
+  
+  res.redirect(`/edit/?id=${parseInt(req.body.id)}`);
+})
+
+
+app.post('/insertExe', (req, res) => {
+  
+  insertExeData(req.body.exe_company_name,req.body.exe_designation,req.body.exe_from,req.body.exe_to,req.body.id)
+
+  res.redirect(`/edit/?id=${parseInt(req.body.id)}`);
+})
+
 
 app.post('/update-data', async (req, res) => {
   const data = req.body;
@@ -472,12 +394,12 @@ app.post('/update-data/edu', (req, res) => {
       con.query(edu_query, (err, result2) => {
         if (err) return console.log(err.message);
         else {
-          res.redirect(`/edit/?id=${id}`)
           console.log(result2, 'acadamic insert success');
         }
 
       })
 
+      res.redirect(`/edit/?id=${id}`)
     }
   }
 
@@ -512,12 +434,12 @@ app.post('/update-data/exe', async (req, res) => {
       con.query(exe_query, (err, result3) => {
         if (err) return console.log(err.message);
         else {
-          res.redirect(`/edit/?id=${id}`)
         }
 
       })
 
     }
+    res.redirect(`/edit/?id=${id}`)
   }
 
 
@@ -552,12 +474,12 @@ app.post('/update-data/ref', async (req, res) => {
       con.query(ref_query, (err, result4) => {
         if (err) return console.log(err.message);
         else {
-          res.redirect(`/edit/?id=${id}`)
         }
 
       })
 
     }
+    res.redirect(`/edit/?id=${id}`)
   }
 
 
@@ -600,8 +522,8 @@ app.post('/update-data/language', (req, res) => {
   })
 })
 
-app.post('/update-data/technology',(req,res)=>{
-  const techId=req.body.tech_id;
+app.post('/update-data/technology', (req, res) => {
+  const techId = req.body.tech_id;
   const id = req.body.id;
 
   con.query(`select * from design.technology_info where candidate_id=${parseInt(req.body.id)}`, (err, result) => {
@@ -631,6 +553,102 @@ async function getData() {
   console.log(temp)
 }
 
+
+function insertEduData(Course, institution, Percentage, Passing_Year,id) {
+
+  
+  if (typeof (Course, institution, Percentage, Passing_Year) == "string") {
+    var edu_query = `INSERT INTO design.acadamic_info (course_name, education_board, education_year, education_grade, candidate_id) values ('${Course}',
+          '${institution}','${Passing_Year}','${Percentage}',${parseInt(id)})`;
+
+    con.query(edu_query, (err, result2) => {
+      if (err) return console.log(err.message);
+      else {
+        console.log(result2, 'acadamic insert success');
+      }
+
+    })
+    console.log(edu_query)
+  }
+  else {
+    for (let i = 0; i < Course.length; i++) {
+      
+
+      let edu_query = `INSERT INTO design.acadamic_info (course_name, education_board, education_year, education_grade, candidate_id) values ('${Course[i]}',
+          '${institution[i]}','${Passing_Year[i]}','${Percentage[i]}',${parseInt(id)})`;
+
+      console.log(edu_query);
+
+      con.query(edu_query, (err, result2) => {
+        if (err) return console.log(err.message);
+        else {
+          console.log(result2, 'acadamic insert success');
+        }
+
+      })
+
+    }
+  }
+  
+}
+
+function insertExeData(exe_company_name, exe_designation, exe_from, exe_to,id){
+    
+    if (typeof (exe_company_name, exe_designation, exe_from, exe_to) == "string") {
+      let exe_query = `INSERT INTO design.experience_info (company_name, candidate_position, candidate_joining, candidate_leaving, candidate_id) values ('${exe_company_name}','${exe_designation}','${exe_from}','${exe_to}',${id})`;
+      con.query(exe_query, (err, result3) => {
+        if (err) return console.log(err.message);
+        else {
+          console.log(result3, 'exepernce insert success');
+        }
+
+      })
+    }
+    else {
+      for (let i = 0; i < exe_company_name.length; i++) {
+
+        let exe_query = `INSERT INTO design.experience_info (company_name, candidate_position, candidate_joining, candidate_leaving, candidate_id) values ('${exe_company_name[i]}','${exe_designation[i]}','${exe_from[i]}','${exe_to[i]}',${id})`;
+        con.query(exe_query, (err, result3) => {
+          if (err) return console.log(err.message);
+          else {
+            console.log(result3, 'technology insert success');
+          }
+
+        })
+
+      }
+    }
+}
+
+function insertRefData(ref_name,ref_number,ref_relation,id){
+
+    if (typeof (ref_name, ref_number, ref_relation) == "string") {
+      var ref_query = `INSERT INTO design.reference_info (person_name, person_contact, person_relation, candidate_id) VALUES ('${ref_name}','${ref_number}','${ref_relation}',${id})`;
+      con.query(ref_query, (err, result4) => {
+        if (err) return console.log(err.message);
+        else {
+          console.log(result4, 'refernces insert success');
+        }
+
+      })
+    }
+    else {
+      for (let i = 0; i < ref_name.length; i++) {
+
+        var ref_query = `INSERT INTO design.reference_info (person_name, person_contact, person_relation, candidate_id) VALUES ('${ref_name[i]}','${ref_number[i]}','${ref_relation[i]}',${id})`;
+
+
+        con.query(ref_query, (err, result4) => {
+          if (err) return console.log(err.message);
+          else {
+            console.log(result4, 'refrence insert success');
+          }
+
+        })
+
+      }
+    }
+}
 const queryExecutor = (query) => {
   return new Promise((resolve, reject) => {
     con.query(query, (err, result) => {
@@ -641,6 +659,6 @@ const queryExecutor = (query) => {
     })
   })
 }
-app.listen(3000, () => {
+app.listen(port, () => {
   console.log('server is running');
 })
